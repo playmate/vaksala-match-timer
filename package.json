@@ -1,0 +1,16 @@
+{
+  "name": "vaksala-match-timer",
+  "version": "1.11.0",
+  "private": true,
+  "scripts": {
+    "android:prepare": "mkdir -p www && cp index.html www/index.html && npx cap sync android",
+    "android:open": "npm run android:prepare && npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/core": "latest",
+    "@capacitor/android": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}
