@@ -31,10 +31,10 @@
     .team{text-align:center;min-width:0}.team-name{font-size:13px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .score{font-size:clamp(46px,11vw,72px);font-weight:950;line-height:.9;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
     .score-sep{font-size:28px;color:#657382;font-weight:900;margin-top:14px}.match-total{text-align:center;color:#667583;font-size:10px;font-weight:800;margin-top:7px;font-variant-numeric:tabular-nums}
-    .goal-btn{margin-top:6px;border:1px solid rgba(83,213,139,.35);background:#173225;color:#bdf3d2;border-radius:999px;padding:6px 10px;font-weight:850;font-size:11px}
+    .goal-actions{display:grid;grid-template-columns:1fr auto;gap:5px;margin-top:6px}.goal-btn{margin-top:0;border:1px solid rgba(83,213,139,.35);background:#173225;color:#bdf3d2;border-radius:999px;padding:6px 10px;font-weight:850;font-size:11px}.goal-remove{border:1px solid rgba(239,106,106,.34);background:#2b1c20;color:#dca1a1;border-radius:999px;padding:6px 9px;font-weight:900;font-size:11px}.goal-remove:disabled{opacity:.28;cursor:default}
     .goal-btn.away{border-color:#405164;background:#1a2632;color:#d5e1ec}
     .match-line{height:1px;background:var(--line);margin:10px 0 9px}
-    .clock-wrap{text-align:center;border:1px solid transparent;border-radius:16px;padding:7px 8px 8px;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}.clock-wrap.running{background:rgba(83,213,139,.11);border-color:rgba(83,213,139,.24);box-shadow:inset 0 0 8px rgba(83,213,139,.035)}.clock-wrap.paused{background:rgba(240,180,86,.11);border-color:rgba(240,180,86,.24);box-shadow:inset 0 0 8px rgba(240,180,86,.035)}.half-pill{display:inline-block;background:#0d161f;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#b7c5d2;font-size:11px;font-weight:850;margin-bottom:5px}
+    .clock-wrap{text-align:center;border:1px solid transparent;border-radius:16px;padding:7px 8px 8px;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}.clock-wrap.running{background:rgba(83,213,139,.22);border-color:rgba(83,213,139,.55);box-shadow:inset 0 0 4px rgba(83,213,139,.05)}.clock-wrap.paused{background:rgba(240,180,86,.22);border-color:rgba(240,180,86,.55);box-shadow:inset 0 0 4px rgba(240,180,86,.05)}.half-pill{display:inline-block;background:#0d161f;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#b7c5d2;font-size:11px;font-weight:850;margin-bottom:5px}
     .clock-row{display:grid;grid-template-columns:minmax(58px,1fr) auto minmax(58px,1fr);align-items:center;gap:7px}
     .clock-adjust{justify-self:center;border:1px solid rgba(132,146,160,.16);background:rgba(132,146,160,.08);color:#6f7e8c;border-radius:12px;padding:8px 9px;font-size:10px;font-weight:900;min-width:58px}
     .clock-adjust:active{background:rgba(132,146,160,.16);color:#9eabb7}
@@ -71,13 +71,13 @@
         <div class="team">
           <div class="team-name">Vaksala SK</div>
           <div class="score" id="homeScore">0</div>
-          <button class="goal-btn" id="homeGoalBtn">+ Mål</button>
+          <div class="goal-actions"><button class="goal-btn" id="homeGoalBtn">+ Mål</button><button class="goal-remove" id="homeRemoveGoalBtn" aria-label="Ta bort senaste Vaksala-målet">−</button></div>
         </div>
         <div class="score-sep">–</div>
         <div class="team">
           <div class="team-name" id="opponentName">Motståndare</div>
           <div class="score" id="awayScore">0</div>
-          <button class="goal-btn away" id="awayGoalBtn">+ Mål</button>
+          <div class="goal-actions"><button class="goal-btn away" id="awayGoalBtn">+ Mål</button><button class="goal-remove" id="awayRemoveGoalBtn" aria-label="Ta bort senaste motståndarmålet">−</button></div>
         </div>
       </div>
       <div class="match-total" id="matchTotal">Total matchtid 00:00</div>
@@ -194,7 +194,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.12.7';
+    const VERSION='1.12.8';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -299,7 +299,7 @@
 
     function render(){
       $('settingsVersion').textContent=`Vaksala SK Match · version ${VERSION}`;
-      $('opponentName').textContent=state.opponent||'Motståndare';$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('matchTotal').textContent='Total matchtid '+fmt(totalElapsed());
+      $('opponentName').textContent=state.opponent||'Motståndare';$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeRemoveGoalBtn').disabled=state.homeScore<=0;$('awayRemoveGoalBtn').disabled=state.awayScore<=0;$('matchTotal').textContent='Total matchtid '+fmt(totalElapsed());
       $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;
       const elapsed=liveElapsed();
       const regulation=state.halfMinutes*60000;
@@ -377,6 +377,14 @@
 
     function recordHomeGoal(scorerId=null){const p=state.players.find(x=>x.id===scorerId);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.homeScore++;state.goals.push({id:uid(),team:'home',half:state.half,timeMs:liveElapsed(),scorerId:scorerId||null,scorer:p?.name||null,onFieldIds});save();$('scorerDialog').close();render()}
     function recordAwayGoal(){state.awayScore++;const gk=state.players.find(p=>p.id===state.goalkeeperId&&p.onField);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.goals.push({id:uid(),team:'away',half:state.half,timeMs:liveElapsed(),scorerId:null,scorer:null,goalkeeperId:gk?.id||null,goalkeeper:gk?.name||null,onFieldIds});save();render()}
+    function removeLatestGoal(team){
+      const index=state.goals.map(g=>g.team).lastIndexOf(team);
+      if(index<0)return;
+      state.goals.splice(index,1);
+      if(team==='home')state.homeScore=Math.max(0,state.homeScore-1);
+      else state.awayScore=Math.max(0,state.awayScore-1);
+      save();render();
+    }
     function openGoalkeeperPicker(){
       const list=$('goalkeeperPickerList');list.innerHTML='';
       const players=[...state.players].filter(p=>p.enabled).sort((a,b)=>{
@@ -508,7 +516,7 @@
 
     $('startPauseBtn').onclick=()=>{if(state.running){settle();state.running=false;state.startedAt=null}else{state.running=true;state.startedAt=Date.now()}save();render()};
     $('finishNowBtn').onclick=()=>{settle();state.running=false;state.startedAt=null;save();render();renderFinishStats();$('finishMatchDialog').showModal()};
-    $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
+    $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('homeRemoveGoalBtn').onclick=()=>removeLatestGoal('home');$('awayRemoveGoalBtn').onclick=()=>removeLatestGoal('away');$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
     $('minutesMinus').onclick=()=>{state.halfMinutes=Math.max(1,state.halfMinutes-1);save();render()};$('minutesPlus').onclick=()=>{state.halfMinutes=Math.min(120,state.halfMinutes+1);save();render()};
     $('halvesMinus').onclick=()=>{state.totalHalves=Math.max(1,state.totalHalves-1);if(state.half>state.totalHalves)state.half=state.totalHalves;save();render()};$('halvesPlus').onclick=()=>{state.totalHalves=Math.min(10,state.totalHalves+1);save();render()};
     $('outfieldMinus').onclick=()=>{
