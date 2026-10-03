@@ -194,7 +194,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.12.4';
+    const VERSION='1.12.5';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -339,7 +339,7 @@
         goalkeeperSwipedOpen=false;
         const emptyGk=document.createElement('button');
         emptyGk.className='empty';
-        emptyGk.textContent='Ingen aktiv målvakt vald';
+        emptyGk.textContent='Ingen aktiv målvakt';
         emptyGk.onclick=()=>{
           const selected=state.players.find(p=>p.id===selectedSwapId);
           if(selected){
@@ -362,7 +362,7 @@
       for(let i=0;i<emptySlots;i++){
         const empty=document.createElement('button');
         empty.className='empty-field-slot';
-        empty.textContent='Tom plats';
+        empty.textContent='';
         empty.onclick=moveSelectedBenchToField;
         $('activePlayers').appendChild(empty);
       }
