@@ -190,7 +190,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.7.6';
+    const VERSION='1.7.7';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -421,6 +421,7 @@
           const hs=ensureHalfStat(p,state.half);
           if(p.onField)hs.playMs=Math.max(0,(hs.playMs||0)+applied);
           else hs.benchMs=Math.max(0,(hs.benchMs||0)+applied);
+          if(p.onField&&p.id===state.goalkeeperId)p.goalkeeperMs=Math.max(0,(p.goalkeeperMs||0)+applied);
           p.stintMs=Math.max(0,(p.stintMs||0)+applied);
         });
       }
