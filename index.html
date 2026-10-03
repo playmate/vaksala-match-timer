@@ -182,7 +182,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.6.2';
+    const VERSION='1.6.3';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -205,7 +205,7 @@
     function fmt(ms){const sec=Math.max(0,Math.floor(ms/1000)),m=Math.floor(sec/60),s=sec%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
 
     function normalizePlayer(p){
-      p.onField=!!p.onField;p.enabled=p.enabled!==false;p.stintMs=Number(p.stintMs)||0;p.halfStats=p.halfStats||{};
+      p.onField=!!p.onField;p.enabled=p.enabled!==false;p.stintMs=Number(p.stintMs)||0;p.goalkeeperMs=Number(p.goalkeeperMs)||0;p.halfStats=p.halfStats||{};
       for(const k of Object.keys(p.halfStats)){p.halfStats[k].playMs=Number(p.halfStats[k].playMs)||0;p.halfStats[k].benchMs=Number(p.halfStats[k].benchMs)||0}
       return p;
     }
@@ -214,19 +214,20 @@
       const byName=new Map(players.map(p=>[p.name.toLocaleLowerCase('sv-SE'),normalizePlayer(p)]));
       return TEAM_ROSTER.map(name=>{
         const existing=byName.get(name.toLocaleLowerCase('sv-SE'));
-        return existing||{id:uid(),name,enabled:false,onField:false,stintMs:0,halfStats:{}};
+        return existing||{id:uid(),name,enabled:false,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}};
       });
     }
     function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
     function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY))||[]}catch{return []}}
     function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
-    function applyDelta(target,delta){target.halfElapsed=target.halfElapsed||{};target.halfElapsed[target.half]=(Number(target.halfElapsed[target.half])||0)+delta;target.elapsedMs=target.halfElapsed[target.half];for(const p of target.players||[]){if(!p.enabled)continue;p.stintMs=(p.stintMs||0)+delta;const hs=ensureHalfStatFor(p,target.half);if(p.onField)hs.playMs+=delta;else hs.benchMs+=delta}}
+    function applyDelta(target,delta){target.halfElapsed=target.halfElapsed||{};target.halfElapsed[target.half]=(Number(target.halfElapsed[target.half])||0)+delta;target.elapsedMs=target.halfElapsed[target.half];for(const p of target.players||[]){if(!p.enabled)continue;p.stintMs=(p.stintMs||0)+delta;if(p.onField&&p.id===target.goalkeeperId)p.goalkeeperMs=(p.goalkeeperMs||0)+delta;const hs=ensureHalfStatFor(p,target.half);if(p.onField)hs.playMs+=delta;else hs.benchMs+=delta}}
     function ensureHalfStatFor(p,half){p.halfStats=p.halfStats||{};if(!p.halfStats[half])p.halfStats[half]={playMs:0,benchMs:0};return p.halfStats[half]}
     function settle(){if(!state.running||!state.startedAt)return;const now=Date.now(),d=Math.max(0,now-state.startedAt);applyDelta(state,d);state.startedAt=now}
     function liveElapsed(){const base=Number(state.halfElapsed?.[state.half])||0;return base+((state.running&&state.startedAt)?Date.now()-state.startedAt:0)}
     function totalElapsed(){let total=Object.values(state.halfElapsed||{}).reduce((s,v)=>s+(Number(v)||0),0);if(state.running&&state.startedAt)total+=Date.now()-state.startedAt;return total}
     function liveStat(p,type){let value=(ensureHalfStat(p)[type]||0);if(state.running&&state.startedAt){const d=Date.now()-state.startedAt;if((type==='playMs'&&p.onField)||(type==='benchMs'&&!p.onField))value+=d}return value}
     function liveStint(p){return (p.stintMs||0)+((state.running&&state.startedAt)?Date.now()-state.startedAt:0)}
+    function liveGoalkeeperTime(p){return (p.goalkeeperMs||0)+((state.running&&state.startedAt&&p.onField&&p.id===state.goalkeeperId)?Date.now()-state.startedAt:0)}
 
     function togglePlayerEnabled(id){
       settle();
@@ -272,7 +273,7 @@
       const wrap=document.createElement('div');wrap.className='gk-swipe';
       const remove=document.createElement('button');remove.className='gk-remove';remove.textContent='Ta bort';
       const b=document.createElement('button');b.className=`gk-card ${selectedSwapId===p.id?'selected':''}`;
-      b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">${fmt(liveStint(p))}</span>`;
+      b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">Total tid som målvakt denna match: ${fmt(liveGoalkeeperTime(p))}</span>`;
       if(goalkeeperSwipedOpen)b.classList.add('swiped');
       let startX=0,startY=0,moved=false;
       b.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;moved=false;b.setPointerCapture?.(e.pointerId)});
@@ -364,7 +365,7 @@
       fill('activeScorers',active,true);fill('benchScorers',bench,false);$('scorerDialog').showModal()
     }
 
-    function startNewMatchWithOpponent(name){const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};selectedSwapId=null;save();render()}
+    function startNewMatchWithOpponent(name){const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};selectedSwapId=null;save();render()}
     function openOpponentDialog(){const d=$('opponentDialog');$('opponentInput').value='';d.showModal();setTimeout(()=>$('opponentInput').focus(),50)}
 
     function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
@@ -401,14 +402,14 @@
     }
     $('minusTen').onclick=()=>adjustCurrentTime(-10000);$('plusTen').onclick=()=>adjustCurrentTime(10000);
     function prepareNewMatch(){
-      const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,halfStats:{}}));
+      const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
       const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};
       state={...defaultState(),...settings,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();openOpponentDialog();
     }
     function resetCurrentMatch(){
       settle();
-      const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,halfStats:{}}));
+      const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
       const keep={opponent:state.opponent,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};
       state={...defaultState(),...keep,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();
