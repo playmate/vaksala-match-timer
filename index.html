@@ -58,6 +58,18 @@
     dialog{border:none;border-radius:24px;background:#111b25;color:var(--text);padding:0;width:min(430px,calc(100% - 24px));box-shadow:0 30px 90px rgba(0,0,0,.58)}dialog::backdrop{background:rgba(0,0,0,.68)}.modal{padding:18px}.modal h2{margin:0 0 7px;font-size:21px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.modal-actions button{border:none;border-radius:13px;padding:12px;font-weight:900}.reset-options{display:grid;gap:8px;margin-top:12px}.reset-option{width:100%;border:1px solid #34495c;background:#172431;color:var(--text);border-radius:14px;padding:12px 13px;text-align:left}.reset-option strong{display:block;font-size:14px;font-weight:950}.reset-option span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:750;line-height:1.35}.reset-option.danger-option{border-color:rgba(239,106,106,.42);background:#2b1c20}.reset-option.danger-option span{color:#c99b9b}.scorer-groups{display:grid;gap:12px;margin-top:12px}.scorer-title{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.scorer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.scorer-btn{border:1px solid var(--line);background:#172431;color:white;border-radius:12px;padding:10px;text-align:left;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scorer-btn.active{border-color:rgba(83,213,139,.42);background:#173025;color:#c9f2d8}.scorer-btn.goalkeeper-choice{border-color:rgba(103,183,255,.46);background:#1b3448;color:#b9ddf7}.scorer-btn.bench-choice{border-color:rgba(240,180,86,.50);background:#302719;color:#e7c38a}.scorer-btn.no-scorer{grid-column:1/-1;text-align:center;color:#aab7c3}.goal-cancel{background:#4a3b1f!important;color:#f2d59a!important;border:1px solid rgba(239,106,106,.48)!important}.goal-no-scorer{background:#1b3448!important;color:#b9ddf7!important;border:1px solid rgba(103,183,255,.42)!important}.status-on{color:var(--green)}.status-bench{color:var(--yellow)}
 
     @media(max-width:560px){.players.field,.players.bench{gap:5px}.player{padding:9px 7px}.player-name{font-size:16px}.stint{font-size:17px}.stint-label{font-size:7px}.half-total{font-size:8px}.settings-grid{grid-template-columns:1fr}.setting.full{grid-column:auto}}
+    @media(max-width:560px) and (min-height:720px){
+      .app{padding-top:14px}
+      .section{margin-top:16px}
+      .goalkeeper-slot{padding:6px;margin-bottom:10px}
+      .goalkeeper-slot .empty{padding:24px 18px}
+      .gk-card{min-height:72px}
+      .player{min-height:102px}
+      .empty-field-slot{min-height:102px}
+      .section-bench .empty{padding:26px 18px}
+      .settings-actions[style]{margin-top:26px!important}
+      details.manage{margin-top:24px;padding-top:12px}
+    }
     @media(min-width:720px){.app{padding-top:22px}.hero{padding:22px}.players.bench{grid-template-columns:repeat(4,minmax(0,1fr))}}
   </style>
 </head>
@@ -203,7 +215,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.14.1';
+    const VERSION='1.14.2';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
