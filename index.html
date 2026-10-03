@@ -49,7 +49,7 @@
 
     .history-empty{color:var(--muted);text-align:center;padding:30px 12px}.history-list{display:grid;gap:10px}.history-card{border:1px solid var(--line);background:#0d151e;border-radius:17px;overflow:hidden}.history-card summary{list-style:none;padding:13px 14px;cursor:pointer}.history-card summary::-webkit-details-marker{display:none}.hist-top{display:flex;justify-content:space-between;gap:12px}.hist-name{font-weight:900}.hist-score{font-weight:950;font-variant-numeric:tabular-nums}.hist-date{color:var(--muted);font-size:10px;font-weight:750;margin-top:3px}.hist-body{border-top:1px solid var(--line);padding:12px 14px}.hist-subtitle{font-size:12px;font-weight:900;margin:10px 0 7px}.stat-table{width:100%;border-collapse:collapse;font-size:11px}.stat-table th,.stat-table td{padding:7px 5px;border-bottom:1px solid #1d2a36;text-align:right;font-variant-numeric:tabular-nums}.stat-table th:first-child,.stat-table td:first-child{text-align:left}.goal-item{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #1d2a36;font-size:11px}.goal-item span:last-child{color:var(--muted)}
 
-    dialog{border:none;border-radius:24px;background:#111b25;color:var(--text);padding:0;width:min(430px,calc(100% - 24px));box-shadow:0 30px 90px rgba(0,0,0,.58)}dialog::backdrop{background:rgba(0,0,0,.68)}.modal{padding:18px}.modal h2{margin:0 0 7px;font-size:21px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.modal-actions button{border:none;border-radius:13px;padding:12px;font-weight:900}.scorer-groups{display:grid;gap:12px;margin-top:12px}.scorer-title{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.scorer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.scorer-btn{border:1px solid var(--line);background:#172431;color:white;border-radius:12px;padding:10px;text-align:left;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scorer-btn.active{border-color:rgba(83,213,139,.4);background:#173025}.scorer-btn.no-scorer{grid-column:1/-1;text-align:center;color:#aab7c3}
+    dialog{border:none;border-radius:24px;background:#111b25;color:var(--text);padding:0;width:min(430px,calc(100% - 24px));box-shadow:0 30px 90px rgba(0,0,0,.58)}dialog::backdrop{background:rgba(0,0,0,.68)}.modal{padding:18px}.modal h2{margin:0 0 7px;font-size:21px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.modal-actions button{border:none;border-radius:13px;padding:12px;font-weight:900}.scorer-groups{display:grid;gap:12px;margin-top:12px}.scorer-title{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.scorer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.scorer-btn{border:1px solid var(--line);background:#172431;color:white;border-radius:12px;padding:10px;text-align:left;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scorer-btn.active{border-color:rgba(83,213,139,.4);background:#173025}.scorer-btn.no-scorer{grid-column:1/-1;text-align:center;color:#aab7c3}.status-on{color:var(--green)}.status-bench{color:var(--yellow)}
 
     @media(max-width:560px){.players.field,.players.bench{gap:5px}.player{padding:9px 7px}.player-name{font-size:16px}.stint{font-size:17px}.stint-label{font-size:7px}.half-total{font-size:8px}.settings-grid{grid-template-columns:1fr}.setting.full{grid-column:auto}}
     @media(min-width:720px){.app{padding-top:22px}.hero{padding:22px}.players.bench{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.6';
+    const VERSION='1.4.7';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -313,7 +313,7 @@
       const list=$('goalkeeperPickerList');list.innerHTML='';
       const players=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
       if(!players.length){list.innerHTML='<div style="color:var(--muted);font-size:12px">Inga spelare tillagda.</div>'}
-      players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.textContent=p.name+(p.onField?' · På plan':' · Bänk');b.onclick=()=>{settle();state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
+      players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.innerHTML='<span>'+escapeHtml(p.name)+'</span> · <span class="'+(p.onField?'status-on':'status-bench')+'">'+(p.onField?'På plan':'På bänk')+'</span>';b.onclick=()=>{settle();state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
       $('goalkeeperPickerDialog').showModal();
     }
 
