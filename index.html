@@ -39,7 +39,7 @@
     .clock-adjust{justify-self:center;border:1px solid rgba(132,146,160,.16);background:rgba(132,146,160,.08);color:#6f7e8c;border-radius:12px;padding:8px 9px;font-size:10px;font-weight:900;min-width:58px}
     .clock-adjust:active{background:rgba(132,146,160,.16);color:#9eabb7}
     .clock{font-size:clamp(42px,10vw,66px);font-weight:950;line-height:.95;letter-spacing:-.055em;font-variant-numeric:tabular-nums}.clock.over{color:var(--red)}.overtime{margin-top:4px;color:var(--red);font-size:19px;font-weight:950;font-variant-numeric:tabular-nums;min-height:22px}.clock-sub{margin-top:4px;color:var(--muted);font-size:10px;font-weight:700}
-    .main-actions{display:grid;grid-template-columns:1.25fr 1fr;gap:7px;margin-top:9px}.btn{border:none;border-radius:14px;padding:11px 10px;font-weight:900}.primary{background:var(--green);color:#06110a}.secondary{background:#203041;color:#eef5fb}.danger{background:#3d2025;color:#ffdada}
+    .main-actions{display:grid;grid-template-columns:1.25fr 1fr;gap:7px;margin-top:9px}.btn{border:none;border-radius:14px;padding:11px 10px;font-weight:900}.half-inline{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}.half-inline-btn{border:1px solid #34495c;background:#1b2936;color:#9eacb9;border-radius:12px;padding:11px 8px;font-size:12px;font-weight:900}.half-inline-btn.active{background:var(--green);border-color:var(--green);color:#07110b;box-shadow:0 0 0 2px rgba(83,213,139,.16)}.primary{background:var(--green);color:#06110a}.secondary{background:#203041;color:#eef5fb}.danger{background:#3d2025;color:#ffdada}
 
     .section{margin-top:10px}.section-head{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 2px 9px;padding:8px 12px;border-radius:14px}.section-title{font-size:18px;font-weight:900;text-align:center}.section-meta{position:absolute;right:12px;color:var(--muted);font-size:11px;font-weight:750;text-align:right}.section-field .section-head{background:rgba(83,213,139,.055);border:1px solid rgba(83,213,139,.10)}.section-field .section-title{color:#8fc9a7}.section-bench .section-head{background:rgba(240,180,86,.055);border:1px solid rgba(240,180,86,.10)}.section-bench .section-title{color:#c9a66f}.section-field .players.field{background:rgba(83,213,139,.10);border:1px solid rgba(83,213,139,.18);border-radius:16px;padding:5px}.section-bench .players.bench{background:rgba(240,180,86,.10);border:1px solid rgba(240,180,86,.18);border-radius:16px;padding:5px}
     .goalkeeper-slot{margin-bottom:6px;padding:4px;border-radius:16px;background:rgba(103,183,255,.11);border:1px solid rgba(103,183,255,.20)}.gk-swipe{position:relative;overflow:hidden;border-radius:18px}.gk-remove{position:absolute;inset:0 0 0 auto;width:96px;border:none;background:#7d242b;color:#ffe3e3;font-weight:950;display:flex;align-items:center;justify-content:center}.gk-card{position:relative;z-index:1;width:100%;border:1px solid rgba(103,183,255,.68);background:linear-gradient(180deg,#193246,#14293a);box-shadow:inset 0 0 0 1px rgba(103,183,255,.10);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;gap:6px 10px;text-align:left;transition:transform .18s ease;touch-action:pan-y}.gk-card.swiped{transform:translateX(-96px)}.gk-badge{grid-row:1/3;align-self:center;background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{grid-column:2;text-align:center;font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#a7d4f7}.gk-time{grid-column:3;grid-row:1/3;align-self:center;font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2;text-align:center;color:#7391a8;font-size:11px;font-weight:800;margin-top:-2px;font-variant-numeric:tabular-nums}
@@ -94,7 +94,7 @@
       </div>
       <div class="main-actions">
         <button class="btn primary" id="startPauseBtn">Starta</button>
-        <button class="btn secondary" id="halfBtn">Halvlek 1 / 2</button>
+        <div class="half-inline" id="halfInline"></div>
       </div>
       <button class="btn danger" id="finishNowBtn" style="width:100%;margin-top:9px">Avsluta match</button>
     </section>
@@ -141,12 +141,6 @@
     <div class="sheet-head"><div class="sheet-title">Historik</div><button class="close" data-close="historySheet">×</button></div>
     <div id="historyContent"></div>
   </div></div>
-
-  <dialog id="halfPickerDialog"><div class="modal">
-    <h2>Välj halvlek</h2><p>Byt till den halvlek som ska vara aktiv.</p>
-    <div class="scorer-list" id="halfPickerList"></div>
-    <div class="modal-actions"><button class="secondary" id="halfPickerCancel">Avbryt</button></div>
-  </div></dialog>
 
   <dialog id="opponentDialog"><div class="modal">
     <h2>Ny match</h2><p>Skriv in motståndarlaget. Vaksala SK är alltid hemmalag som standard.</p>
@@ -200,7 +194,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.12.2';
+    const VERSION='1.12.3';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -314,7 +308,17 @@
       $('clock').classList.toggle('over',over);
       $('overtime').textContent=over?'+ '+fmt(elapsed-regulation):'';
       $('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · övertid':''}`;
-      $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent='Halvlek '+state.half+' / '+state.totalHalves;
+      $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');
+      const halfInline=$('halfInline');
+      halfInline.innerHTML='';
+      for(let h=1;h<=state.totalHalves;h++){
+        const b=document.createElement('button');
+        b.className='half-inline-btn'+(h===state.half?' active':'');
+        b.textContent='H'+h;
+        b.setAttribute('aria-pressed',h===state.half?'true':'false');
+        b.onclick=()=>setCurrentHalf(h);
+        halfInline.appendChild(b);
+      }
       const sorted=[...state.players].sort((a,b)=>{
         if(a.enabled!==b.enabled)return a.enabled?-1:1;
         return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
@@ -501,17 +505,6 @@
     function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))}
 
     $('startPauseBtn').onclick=()=>{if(state.running){settle();state.running=false;state.startedAt=null}else{state.running=true;state.startedAt=Date.now()}save();render()};
-    $('halfBtn').onclick=()=>{
-      const list=$('halfPickerList');list.innerHTML='';
-      for(let h=1;h<=state.totalHalves;h++){
-        const b=document.createElement('button');
-        b.className='scorer-btn'+(h===state.half?' active':'');
-        b.textContent='Halvlek '+h;
-        b.onclick=()=>{setCurrentHalf(h);$('halfPickerDialog').close()};
-        list.appendChild(b);
-      }
-      $('halfPickerDialog').showModal();
-    };
     $('finishNowBtn').onclick=()=>{settle();state.running=false;state.startedAt=null;save();render();renderFinishStats();$('finishMatchDialog').showModal()};
     $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
     $('minutesMinus').onclick=()=>{state.halfMinutes=Math.max(1,state.halfMinutes-1);save();render()};$('minutesPlus').onclick=()=>{state.halfMinutes=Math.min(120,state.halfMinutes+1);save();render()};
@@ -579,7 +572,6 @@
       $('finishStats').innerHTML='<div class="hist-top"><span class="hist-name">'+TEAM+' - '+escapeHtml(state.opponent||'Motståndare')+'</span><span class="hist-score">'+state.homeScore+'–'+state.awayScore+'</span></div><div class="hist-date">Total matchtid '+fmt(totalElapsed())+'</div>'+stats+'<div class="hist-subtitle">Målhändelser</div>'+goals;
     }
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
-    $('halfPickerCancel').onclick=()=>$('halfPickerDialog').close();
     $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
     $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();openOpponentDialog()};
     $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();openOpponentDialog()};
