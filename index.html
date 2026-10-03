@@ -190,7 +190,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.11.0';
+    const VERSION='1.11.1';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -568,7 +568,20 @@
     $('opponentCancel').onclick=()=>{if(state.opponent)$('opponentDialog').close()};$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
     $('settingsTab').onclick=()=>openSheet('settingsSheet');$('historyTab').onclick=()=>openSheet('historySheet');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);document.querySelectorAll('.sheet').forEach(s=>s.onclick=e=>{if(e.target===s)closeSheets()});
 
-    setInterval(()=>{if(state.running)render()},500);
+    const vibratedSevenMinute=new Set();
+    function checkSevenMinuteVibration(){
+      state.players.forEach(p=>{
+        const key=p.id;
+        const eligible=p.enabled&&p.id!==state.goalkeeperId;
+        const ms=liveStint(p);
+        if(!eligible||ms<7*60000){vibratedSevenMinute.delete(key);return}
+        if(!vibratedSevenMinute.has(key)){
+          vibratedSevenMinute.add(key);
+          if(navigator.vibrate)navigator.vibrate(250);
+        }
+      });
+    }
+    setInterval(()=>{if(state.running){checkSevenMinuteVibration();render()}},500);
     window.addEventListener('beforeunload',()=>{if(state.running)settle();save()});document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state.running)settle();save()}else if(state.running){state.startedAt=Date.now()}});
 
     render();
