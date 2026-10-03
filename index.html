@@ -39,7 +39,7 @@
     .goalkeeper-slot{margin-bottom:10px;padding:6px;border-radius:18px;background:rgba(103,183,255,.045);border:1px solid rgba(103,183,255,.09)}.gk-swipe{position:relative;overflow:hidden;border-radius:18px}.gk-remove{position:absolute;inset:0 0 0 auto;width:96px;border:none;background:#7d242b;color:#ffe3e3;font-weight:950;display:flex;align-items:center;justify-content:center}.gk-card{position:relative;z-index:1;width:100%;border:1px solid rgba(103,183,255,.45);background:linear-gradient(180deg,#172b3b,#132331);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;gap:6px 10px;text-align:left;transition:transform .18s ease;touch-action:pan-y}.gk-card.swiped{transform:translateX(-96px)}.gk-badge{grid-row:1/3;align-self:center;background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{grid-column:2;text-align:center;font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gk-time{grid-column:3;grid-row:1/3;align-self:center;font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2;text-align:center;color:#7391a8;font-size:11px;font-weight:800;margin-top:-2px;font-variant-numeric:tabular-nums}
     .players.field{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.players.bench{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
     .player{position:relative;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:17px;padding:11px 10px;min-width:0;color:var(--text);transition:.12s transform}.player:active{transform:scale(.98)}.player.active{border-color:rgba(83,213,139,.36);background:linear-gradient(180deg,#172a24,#13221e)}.player.bench{border-color:rgba(240,180,86,.22)}.player.selected,.gk-card.selected{outline:3px solid #63b3ff;outline-offset:2px}.player.time-warn,.gk-card.time-warn{border-color:#f0b456!important;background:linear-gradient(180deg,#332818,#241e15)!important}.player.time-danger,.gk-card.time-danger{border-color:#ff6565!important;background:linear-gradient(180deg,#351b1f,#27161a)!important}
-    .player-name{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}.stint{margin-top:9px;font-size:20px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.stint-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.half-total{margin-top:6px;color:#667583;font-size:9px;font-weight:750;font-variant-numeric:tabular-nums}.empty{grid-column:1/-1;width:100%;color:#7d8995;background:#111820;border:1px dashed #344250;border-radius:16px;padding:18px;text-align:center;font-size:13px;font-weight:800}
+    .player-name{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}.stint{margin-top:9px;font-size:20px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.stint-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.half-total{margin-top:6px;color:#667583;font-size:9px;font-weight:750;font-variant-numeric:tabular-nums}.empty{grid-column:1/-1;width:100%;color:#7d8995;background:#111820;border:1px dashed #344250;border-radius:16px;padding:18px;text-align:center;font-size:13px;font-weight:800}.empty-field-slot{min-height:86px;color:#64717d;background:rgba(125,137,149,.055);border:1px dashed rgba(125,137,149,.22);border-radius:17px;padding:10px;font-size:11px;font-weight:850;display:flex;align-items:center;justify-content:center;text-align:center}
 
     details.manage{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}details.manage summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 4px;color:var(--muted);font-weight:850;cursor:pointer;font-size:13px}details.manage summary::-webkit-details-marker{display:none}.manage-body{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:13px}.add-row{display:flex;gap:8px}.input{width:100%;background:#0d151e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px 13px;outline:none}.add-row button{border:none;border-radius:13px;background:#243749;color:white;padding:0 14px;font-weight:850}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.chip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#0f1821;border-radius:999px;padding:7px 8px 7px 11px;font-size:12px;font-weight:800}.chip button{width:22px;height:22px;border:none;border-radius:50%;background:#2d1b1e;color:#ffb5b5;padding:0}.roster-list{display:grid;gap:7px}.roster-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0f1821;border:1px solid var(--line);border-radius:13px;padding:9px 10px}.roster-name{font-size:14px;font-weight:850}.roster-toggle{border:1px solid #3a4b5c;background:#1b2936;color:#aebbc7;border-radius:10px;padding:7px 10px;font-size:11px;font-weight:900}.roster-toggle.enabled{border-color:rgba(83,213,139,.4);background:#173025;color:#8ae5af}
 
@@ -127,6 +127,7 @@
     <div class="settings-grid">
       <div class="setting full"><div class="setting-label">Matchtid / halvlek</div><div class="stepper"><button id="minutesMinus">−</button><div class="stepper-value"><span id="minutesValue">30</span> min</div><button id="minutesPlus">+</button></div></div>
       <div class="setting"><div class="setting-label">Antal halvlekar</div><div class="stepper"><button id="halvesMinus">−</button><div class="stepper-value" id="halvesValue">2</div><button id="halvesPlus">+</button></div></div>
+      <div class="setting"><div class="setting-label">Antal utespelare</div><div class="stepper"><button id="outfieldMinus">−</button><div class="stepper-value" id="outfieldValue">4</div><button id="outfieldPlus">+</button></div></div>
     </div>
     <div class="version-box" id="settingsVersion"></div>
   </div></div>
@@ -188,14 +189,14 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.6.6';
+    const VERSION='1.7.0';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
     const TEAM_ROSTER=['Nåd','Antony','Augustus','Endrit','Erik','Liam','John','Rahand','Lwi','Frans','Charles','Salah','Finn','Ryan','Ian','Karam','Jarvis','Advaith','Josef','Raphael','Even'];
 
     const defaultState=()=>({
-      opponent:'',homeScore:0,awayScore:0,half:1,totalHalves:2,halfMinutes:30,goalkeeperId:null,
+      opponent:'',homeScore:0,awayScore:0,half:1,totalHalves:2,halfMinutes:30,outfieldCount:4,goalkeeperId:null,
       running:false,elapsedMs:0,halfElapsed:{1:0},startedAt:null,players:[],goals:[],createdAt:new Date().toISOString()
     });
 
@@ -223,7 +224,7 @@
         return existing||{id:uid(),name,enabled:false,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}};
       });
     }
-    function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
+    function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.outfieldCount=Math.max(1,Math.min(8,Number(p.outfieldCount)||4));p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
     function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY))||[]}catch{return []}}
     function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
     function applyDelta(target,delta){target.halfElapsed=target.halfElapsed||{};target.halfElapsed[target.half]=(Number(target.halfElapsed[target.half])||0)+delta;target.elapsedMs=target.halfElapsed[target.half];for(const p of target.players||[]){if(!p.enabled)continue;p.stintMs=(p.stintMs||0)+delta;if(p.onField&&p.id===target.goalkeeperId)p.goalkeeperMs=(p.goalkeeperMs||0)+delta;const hs=ensureHalfStatFor(p,target.half);if(p.onField)hs.playMs+=delta;else hs.benchMs+=delta}}
@@ -270,7 +271,9 @@
     }
     function moveSelectedBenchToField(){
       const selected=state.players.find(x=>x.id===selectedSwapId);
-      if(!selected||selected.onField)return;
+      if(!selected||selected.onField||!selected.enabled)return;
+      const activeOutfield=state.players.filter(x=>x.enabled&&x.onField&&x.id!==state.goalkeeperId).length;
+      if(activeOutfield>=state.outfieldCount)return;
       settle();selected.onField=true;selected.stintMs=0;selectedSwapId=null;save();render();
     }
 
@@ -335,17 +338,19 @@
         $('goalkeeperSlot').appendChild(emptyGk);
       }
       $('activePlayers').innerHTML='';$('benchPlayers').innerHTML='';
-      if(!outfield.length){
+      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p)));
+      const emptySlots=Math.max(0,state.outfieldCount-outfield.length);
+      for(let i=0;i<emptySlots;i++){
         const empty=document.createElement('button');
-        empty.className='empty';
-        empty.textContent='Inga utespelare på plan';
+        empty.className='empty-field-slot';
+        empty.textContent='Tom plats';
         empty.onclick=moveSelectedBenchToField;
         $('activePlayers').appendChild(empty);
       }
       if(!bench.length)$('benchPlayers').innerHTML='<div class="empty">Ingen spelare på bänken</div>';
-      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p)));bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p)));
+      bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p)));
       $('manageList').innerHTML='';sorted.forEach(p=>{const row=document.createElement('div');row.className='roster-row';row.innerHTML='<span class="roster-name">'+escapeHtml(p.name)+'</span><button class="roster-toggle '+(p.enabled?'enabled':'')+'">'+(p.enabled?'Aktiverad':'Aktivera')+'</button>';row.querySelector('button').onclick=()=>togglePlayerEnabled(p.id);$('manageList').appendChild(row)});
-      $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;
+      $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;$('outfieldValue').textContent=state.outfieldCount;
       renderHistory();
     }
 
@@ -371,10 +376,10 @@
       fill('activeScorers',active,true);fill('benchScorers',bench,false);$('scorerDialog').showModal()
     }
 
-    function startNewMatchWithOpponent(name){const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};selectedSwapId=null;save();render()}
+    function startNewMatchWithOpponent(name){const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};selectedSwapId=null;save();render()}
     function openOpponentDialog(){const d=$('opponentDialog');$('opponentInput').value='';d.showModal();setTimeout(()=>$('opponentInput').focus(),50)}
 
-    function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
+    function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount,goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
     function totalPlay(p){return Object.values(p.halfStats||{}).reduce((s,h)=>s+(h.playMs||0),0)}
     function renderHistory(){const box=$('historyContent');if(!history.length){box.innerHTML='<div class="history-empty">Inga sparade matcher ännu.</div>';return}box.innerHTML='<div class="history-list"></div>';const list=box.firstChild;history.forEach(m=>{const d=document.createElement('details');d.className='history-card';const date=new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'});const maxHalf=Math.max(m.totalHalves||1,...m.players.flatMap(p=>Object.keys(p.halfStats||{}).map(Number)),1);let headers='';for(let h=1;h<=maxHalf;h++)headers+=`<th>H${h}</th>`;let rows=m.players.slice().sort((a,b)=>a.name.localeCompare(b.name,'sv-SE')).map(p=>{let cells='';for(let h=1;h<=maxHalf;h++)cells+=`<td>${fmt(p.halfStats?.[h]?.playMs||0)}</td>`;const conceded=p.goalsConceded??(m.goals||[]).filter(g=>g.team==='away'&&(g.goalkeeperId===p.id||(!g.goalkeeperId&&g.goalkeeper===p.name))).length;return `<tr><td>${escapeHtml(p.name)}</td>${cells}<td>${fmt(totalPlay(p))}</td><td>${conceded}</td></tr>`}).join('');let goals=(m.goals||[]).map(g=>`<div class="goal-item"><span>${g.team==='home'?escapeHtml(g.scorer||TEAM):escapeHtml(m.opponent||'Motståndare')}</span><span>H${g.half} · ${fmt(g.timeMs)}</span></div>`).join('')||'<div style="color:var(--muted);font-size:11px">Inga mål registrerade.</div>';d.innerHTML=`<summary><div class="hist-top"><span class="hist-name">${escapeHtml(m.name)}</span><span class="hist-score">${m.homeScore}–${m.awayScore}</span></div><div class="hist-date">${date}</div></summary><div class="hist-body"><div class="hist-subtitle">Speltid per halvlek</div><div style="overflow:auto"><table class="stat-table"><thead><tr><th>Spelare</th>${headers}<th>Totalt</th><th>Mål insläppta</th></tr></thead><tbody>${rows}</tbody></table></div><div class="hist-subtitle">Mål</div>${goals}</div>`;list.appendChild(d)})}
 
@@ -386,6 +391,14 @@
     $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
     $('minutesMinus').onclick=()=>{state.halfMinutes=Math.max(1,state.halfMinutes-1);save();render()};$('minutesPlus').onclick=()=>{state.halfMinutes=Math.min(120,state.halfMinutes+1);save();render()};
     $('halvesMinus').onclick=()=>{state.totalHalves=Math.max(1,state.totalHalves-1);if(state.half>state.totalHalves)state.half=state.totalHalves;save();render()};$('halvesPlus').onclick=()=>{state.totalHalves=Math.min(10,state.totalHalves+1);save();render()};
+    $('outfieldMinus').onclick=()=>{
+      settle();
+      const next=Math.max(1,state.outfieldCount-1);
+      const active=state.players.filter(p=>p.enabled&&p.onField&&p.id!==state.goalkeeperId);
+      if(active.length>next)active.slice(next).forEach(p=>{p.onField=false;p.stintMs=0});
+      state.outfieldCount=next;save();render();
+    };
+    $('outfieldPlus').onclick=()=>{state.outfieldCount=Math.min(8,state.outfieldCount+1);save();render()};
     function setCurrentHalf(nextHalf){settle();state.half=Math.max(1,Math.min(state.totalHalves,nextHalf));state.halfElapsed=state.halfElapsed||{};if(state.halfElapsed[state.half]==null)state.halfElapsed[state.half]=0;state.elapsedMs=state.halfElapsed[state.half];state.players.forEach(p=>p.stintMs=0);if(state.running)state.startedAt=Date.now();save();render()}
     function adjustCurrentTime(delta){
       settle();
@@ -409,14 +422,14 @@
     $('minusTen').onclick=()=>adjustCurrentTime(-10000);$('plusTen').onclick=()=>adjustCurrentTime(10000);
     function prepareNewMatch(){
       const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
-      const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};
+      const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};
       state={...defaultState(),...settings,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();openOpponentDialog();
     }
     function resetCurrentMatch(){
       settle();
       const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
-      const keep={opponent:state.opponent,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};
+      const keep={opponent:state.opponent,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};
       state={...defaultState(),...keep,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();
     }
