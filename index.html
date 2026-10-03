@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.5.1';
+    const VERSION='1.5.2';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -300,7 +300,20 @@
         const emptyGk=document.createElement('button');
         emptyGk.className='empty';
         emptyGk.textContent='Ingen aktiv målvakt vald';
-        emptyGk.onclick=openGoalkeeperPicker;
+        emptyGk.onclick=()=>{
+          const selected=state.players.find(p=>p.id===selectedSwapId);
+          if(selected){
+            settle();
+            selected.onField=true;
+            selected.stintMs=0;
+            state.goalkeeperId=selected.id;
+            selectedSwapId=null;
+            save();
+            render();
+            return;
+          }
+          openGoalkeeperPicker();
+        };
         $('goalkeeperSlot').appendChild(emptyGk);
       }
       $('activePlayers').innerHTML='';$('benchPlayers').innerHTML='';
