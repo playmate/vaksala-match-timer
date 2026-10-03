@@ -62,7 +62,7 @@
     .undo-btn{border:1px solid #34495c;background:#1b2936;color:#c9d5df;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:900}.undo-btn:disabled{opacity:.3}
     .field-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 7px;color:#91a0ad;font-size:10px;font-weight:850}.field-count{color:#a7e0bc}.next-swap{color:#d7b77f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .player.next-bench{box-shadow:inset 0 0 0 1px rgba(240,180,86,.25),0 0 0 2px rgba(240,180,86,.16)}
-    .player.next-bench::after{content:'NÄSTA';position:absolute;left:6px;top:6px;border:1px solid rgba(240,180,86,.42);background:#4a381d;color:#f3d49d;border-radius:7px;padding:2px 4px;font-size:6px;font-weight:950;letter-spacing:.05em}
+    .player.next-bench::after{content:'NÄSTA';position:absolute;left:50%;top:5px;transform:translateX(-50%);border:1px solid rgba(240,180,86,.42);background:#4a381d;color:#f3d49d;border-radius:7px;padding:2px 5px;font-size:6px;font-weight:950;letter-spacing:.05em}
     .player.time-warn .stint::after,.player.time-danger .stint::after{content:'●';display:inline-block;margin-left:4px;font-size:8px;vertical-align:2px}.player.time-warn .stint::after{color:#f0b456}.player.time-danger .stint::after{color:#ff6565}
     .clock-wrap.time-up{border-color:rgba(239,106,106,.72)!important;box-shadow:inset 0 0 0 1px rgba(239,106,106,.18)!important}.clock-wrap.time-up .clock-sub{color:#f29a9a;font-weight:900}
     .roster-tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}.roster-tool{border:1px solid #34495c;background:#172431;color:#cfdae4;border-radius:11px;padding:9px 6px;font-size:9px;font-weight:900}
@@ -256,7 +256,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.15.0-preview';
+    const VERSION='1.15.1-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
