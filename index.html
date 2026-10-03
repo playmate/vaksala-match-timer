@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.7';
+    const VERSION='1.4.8';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -311,7 +311,10 @@
     function recordAwayGoal(){state.awayScore++;state.goals.push({id:uid(),team:'away',half:state.half,timeMs:liveElapsed(),scorerId:null,scorer:null});save();render()}
     function openGoalkeeperPicker(){
       const list=$('goalkeeperPickerList');list.innerHTML='';
-      const players=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
+      const players=[...state.players].sort((a,b)=>{
+        if(a.onField!==b.onField)return a.onField?-1:1;
+        return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
+      });
       if(!players.length){list.innerHTML='<div style="color:var(--muted);font-size:12px">Inga spelare tillagda.</div>'}
       players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.innerHTML='<span>'+escapeHtml(p.name)+'</span> · <span class="'+(p.onField?'status-on':'status-bench')+'">'+(p.onField?'På plan':'På bänk')+'</span>';b.onclick=()=>{settle();state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
       $('goalkeeperPickerDialog').showModal();
