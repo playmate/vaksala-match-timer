@@ -36,7 +36,7 @@
     .main-actions{display:grid;grid-template-columns:1.25fr 1fr;gap:9px;margin-top:14px}.btn{border:none;border-radius:16px;padding:14px 12px;font-weight:900}.primary{background:var(--green);color:#06110a}.secondary{background:#203041;color:#eef5fb}.danger{background:#3d2025;color:#ffdada}
 
     .section{margin-top:18px}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 2px 9px}.section-title{font-size:18px;font-weight:900}.section-meta{color:var(--muted);font-size:11px;font-weight:750;text-align:right}
-    .goalkeeper-slot{margin-bottom:10px}.gk-card{width:100%;border:1px solid rgba(103,183,255,.45);background:linear-gradient(180deg,#172b3b,#132331);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;text-align:left}.gk-badge{background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gk-time{font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2/4;color:#7391a8;font-size:10px;font-weight:750;margin-top:-5px}
+    .goalkeeper-slot{margin-bottom:10px}.gk-swipe{position:relative;overflow:hidden;border-radius:18px}.gk-remove{position:absolute;inset:0 0 0 auto;width:96px;border:none;background:#7d242b;color:#ffe3e3;font-weight:950;display:flex;align-items:center;justify-content:center}.gk-card{position:relative;z-index:1;width:100%;border:1px solid rgba(103,183,255,.45);background:linear-gradient(180deg,#172b3b,#132331);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;text-align:left;transition:transform .18s ease;touch-action:pan-y}.gk-card.swiped{transform:translateX(-96px)}.gk-badge{align-self:center;background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gk-time{font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2/4;color:#7391a8;font-size:10px;font-weight:750;margin-top:-5px}
     .players.field{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.players.bench{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
     .player{position:relative;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:17px;padding:11px 10px;min-width:0;color:var(--text);transition:.12s transform}.player:active{transform:scale(.98)}.player.active{border-color:rgba(83,213,139,.36);background:linear-gradient(180deg,#172a24,#13221e)}.player.bench{border-color:rgba(240,180,86,.22)}.player.selected,.gk-card.selected{outline:3px solid #63b3ff;outline-offset:2px}.player.time-warn,.gk-card.time-warn{border-color:#f0b456!important;background:linear-gradient(180deg,#332818,#241e15)!important}.player.time-danger,.gk-card.time-danger{border-color:#ff6565!important;background:linear-gradient(180deg,#351b1f,#27161a)!important}
     .player-name{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}.stint{margin-top:9px;font-size:20px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.stint-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.half-total{margin-top:6px;color:#667583;font-size:9px;font-weight:750;font-variant-numeric:tabular-nums}.empty{grid-column:1/-1;color:var(--muted);border:1px dashed var(--line);border-radius:16px;padding:18px;text-align:center;font-size:13px}
@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.4';
+    const VERSION='1.4.5';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -260,7 +260,18 @@
     }
 
     function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">Halvlek: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
-    function goalkeeperCard(p){const b=document.createElement('button');b.className=`gk-card ${selectedSwapId===p.id?'selected':''}`;b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">Halvlek: ${fmt(liveStat(p,'playMs'))} · tryck för att markera för byte</span>`;b.onclick=()=>chooseForSwap(p);return b}
+    function goalkeeperCard(p){
+      const wrap=document.createElement('div');wrap.className='gk-swipe';
+      const remove=document.createElement('button');remove.className='gk-remove';remove.textContent='Ta bort';
+      const b=document.createElement('button');b.className=`gk-card ${selectedSwapId===p.id?'selected':''}`;
+      b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">Halvlek: ${fmt(liveStat(p,'playMs'))} · tryck för att markera för byte</span>`;
+      let startX=0,startY=0,moved=false;
+      b.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;moved=false;b.setPointerCapture?.(e.pointerId)});
+      b.addEventListener('pointermove',e=>{const dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){moved=true;if(dx<0)b.classList.add('swiped');else if(dx>0)b.classList.remove('swiped')}});
+      b.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();return}chooseForSwap(p)});
+      remove.onclick=()=>{settle();p.onField=false;p.stintMs=0;if(state.goalkeeperId===p.id)state.goalkeeperId=null;selectedSwapId=null;save();render()};
+      wrap.appendChild(remove);wrap.appendChild(b);return wrap
+    }
 
     function render(){
       $('settingsVersion').textContent=`Vaksala SK Match · version ${VERSION}`;
