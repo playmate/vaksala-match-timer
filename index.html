@@ -34,7 +34,7 @@
     .goal-btn,.goal-remove{width:32px;height:32px;border-radius:50%;padding:0;font-size:18px;font-weight:950;display:flex;align-items:center;justify-content:center}.goal-btn{border:1px solid rgba(83,213,139,.5);background:#173225;color:#bdf3d2}.goal-btn.away{border-color:#405164;background:#1a2632;color:#d5e1ec}.goal-remove{border:1px solid rgba(239,106,106,.42);background:#2b1c20;color:#dca1a1}.goal-remove:disabled{opacity:.28;cursor:default}
     .goal-btn.away{border-color:#405164;background:#1a2632;color:#d5e1ec}
     .match-line{height:1px;background:var(--line);margin:10px 0 9px}
-    .clock-wrap{text-align:center;border:1px solid transparent;border-radius:16px;padding:7px 8px 8px;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}.clock-wrap.running{background:rgba(83,213,139,.22);border-color:rgba(83,213,139,.55);box-shadow:inset 0 0 4px rgba(83,213,139,.05)}.clock-wrap.paused{background:rgba(240,180,86,.22);border-color:rgba(240,180,86,.55);box-shadow:inset 0 0 4px rgba(240,180,86,.05)}.half-pill{display:inline-block;background:#0d161f;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#b7c5d2;font-size:11px;font-weight:850;margin-bottom:5px}
+    .clock-wrap{text-align:center;border:1px solid transparent;border-radius:16px;padding:7px 8px 8px;transition:background .22s ease,border-color .22s ease,box-shadow .22s ease}.clock-wrap.running{background:rgba(83,213,139,.22);border-color:rgba(83,213,139,.55);box-shadow:inset 0 0 4px rgba(83,213,139,.05);animation:runningPulse 1.8s ease-in-out infinite}.clock-wrap.paused{background:rgba(240,180,86,.22);border-color:rgba(240,180,86,.55);box-shadow:inset 0 0 4px rgba(240,180,86,.05);animation:none}@keyframes runningPulse{0%,100%{background:rgba(83,213,139,.22);border-color:rgba(83,213,139,.55)}50%{background:rgba(83,213,139,.36);border-color:rgba(118,235,164,.82)}}.half-pill{display:inline-block;background:#0d161f;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#b7c5d2;font-size:11px;font-weight:850;margin-bottom:5px}
     .clock-row{display:grid;grid-template-columns:minmax(58px,1fr) auto minmax(58px,1fr);align-items:center;gap:7px}
     .clock-adjust{justify-self:center;border:1px solid rgba(132,146,160,.16);background:rgba(132,146,160,.08);color:#6f7e8c;border-radius:12px;padding:8px 9px;font-size:10px;font-weight:900;min-width:58px}
     .clock-adjust:active{background:rgba(132,146,160,.16);color:#9eabb7}#plusTen,#minusTen{border-color:rgba(103,183,255,.42);box-shadow:inset 0 0 0 1px rgba(103,183,255,.05)}
@@ -213,7 +213,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.14.4';
+    const VERSION='1.14.5';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
