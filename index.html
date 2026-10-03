@@ -109,7 +109,7 @@
     </div>
 
     <details class="manage" id="managePanel">
-      <summary><span>Spelare</span><span>Aktivera till match</span></summary>
+      <summary><span>Spelare</span><span></span></summary>
       <div class="manage-body">
         <div class="roster-list" id="manageList"></div>
       </div>
@@ -182,7 +182,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.6.0';
+    const VERSION='1.6.1';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -296,7 +296,10 @@
       $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;$('clock').textContent=fmt(liveElapsed());
       const over=liveElapsed()>=state.halfMinutes*60000;$('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · ordinarie tid passerad':''}`;
       $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent=state.half>=state.totalHalves?'Avsluta match':'Nästa halvlek';
-      const sorted=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'}));
+      const sorted=[...state.players].sort((a,b)=>{
+        if(a.enabled!==b.enabled)return a.enabled?-1:1;
+        return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
+      });
       const matchPlayers=sorted.filter(p=>p.enabled);
       const gk=matchPlayers.find(p=>p.id===state.goalkeeperId&&p.onField);
       const outfield=matchPlayers.filter(p=>p.onField&&p.id!==state.goalkeeperId).sort((a,b)=>{
