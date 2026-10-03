@@ -94,13 +94,13 @@
     </section>
 
     <section class="section section-field">
-      <div class="section-head"><div class="section-title">På plan</div><div class="section-meta" id="activeCount">0 utespelare</div></div>
+      <div class="section-head"><div class="section-title">På plan</div></div>
       <div class="goalkeeper-slot" id="goalkeeperSlot"></div>
       <div class="players field" id="activePlayers"></div>
     </section>
 
     <section class="section section-bench">
-      <div class="section-head"><div class="section-title">Bänk</div><div class="section-meta">Tryck för att flytta in/ut</div></div>
+      <div class="section-head"><div class="section-title">Bänk</div></div>
       <div class="players bench" id="benchPlayers"></div>
     </section>
 
@@ -190,7 +190,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.7.2';
+    const VERSION='1.7.3';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -321,7 +321,7 @@
         const diff=liveStint(b)-liveStint(a);
         return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
       });
-      $('activeCount').textContent=outfield.length+' utespelare'+(gk?' + MV':'');$('goalkeeperSlot').innerHTML='';
+      $('goalkeeperSlot').innerHTML='';
       if(gk)$('goalkeeperSlot').appendChild(goalkeeperCard(gk));
       else {
         goalkeeperSwipedOpen=false;
