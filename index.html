@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.1';
+    const VERSION='1.4.2';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -332,7 +332,25 @@
     $('minutesMinus').onclick=()=>{state.halfMinutes=Math.max(1,state.halfMinutes-1);save();render()};$('minutesPlus').onclick=()=>{state.halfMinutes=Math.min(120,state.halfMinutes+1);save();render()};
     $('halvesMinus').onclick=()=>{state.totalHalves=Math.max(1,state.totalHalves-1);if(state.half>state.totalHalves)state.half=state.totalHalves;save();render()};$('halvesPlus').onclick=()=>{state.totalHalves=Math.min(10,state.totalHalves+1);save();render()};
     function setCurrentHalf(nextHalf){settle();state.half=Math.max(1,Math.min(state.totalHalves,nextHalf));state.halfElapsed=state.halfElapsed||{};if(state.halfElapsed[state.half]==null)state.halfElapsed[state.half]=0;state.elapsedMs=state.halfElapsed[state.half];state.players.forEach(p=>p.stintMs=0);if(state.running)state.startedAt=Date.now();save();render()}
-    $('minusTen').onclick=()=>{settle();state.halfElapsed=state.halfElapsed||{};state.halfElapsed[state.half]=Math.max(0,(Number(state.halfElapsed[state.half])||0)-10000);state.elapsedMs=state.halfElapsed[state.half];save();render()};$('plusTen').onclick=()=>{settle();state.halfElapsed=state.halfElapsed||{};state.halfElapsed[state.half]=(Number(state.halfElapsed[state.half])||0)+10000;state.elapsedMs=state.halfElapsed[state.half];save();render()};
+    function adjustCurrentTime(delta){
+      settle();
+      state.halfElapsed=state.halfElapsed||{};
+      const before=Number(state.halfElapsed[state.half])||0;
+      const after=Math.max(0,before+delta);
+      const applied=after-before;
+      state.halfElapsed[state.half]=after;
+      state.elapsedMs=after;
+      if(applied!==0){
+        state.players.forEach(p=>{
+          if(!p.onField)return;
+          const hs=ensureHalfStat(p,state.half);
+          hs.playMs=Math.max(0,(hs.playMs||0)+applied);
+          p.stintMs=Math.max(0,(p.stintMs||0)+applied);
+        });
+      }
+      save();render();
+    }
+    $('minusTen').onclick=()=>adjustCurrentTime(-10000);$('plusTen').onclick=()=>adjustCurrentTime(10000);
     function prepareNewMatch(){
       const roster=state.players.map(p=>({id:p.id,name:p.name,onField:false,stintMs:0,halfStats:{}}));
       const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes};
