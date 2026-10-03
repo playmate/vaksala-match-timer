@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.5.0';
+    const VERSION='1.5.1';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -284,7 +284,15 @@
       const over=liveElapsed()>=state.halfMinutes*60000;$('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · ordinarie tid passerad':''}`;
       $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent=state.half>=state.totalHalves?'Avsluta match':'Nästa halvlek';
       const sorted=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'}));
-      const gk=sorted.find(p=>p.id===state.goalkeeperId&&p.onField);const outfield=sorted.filter(p=>p.onField&&p.id!==state.goalkeeperId);const bench=sorted.filter(p=>!p.onField);
+      const gk=sorted.find(p=>p.id===state.goalkeeperId&&p.onField);
+      const outfield=sorted.filter(p=>p.onField&&p.id!==state.goalkeeperId).sort((a,b)=>{
+        const diff=liveStat(b,'playMs')-liveStat(a,'playMs');
+        return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
+      });
+      const bench=sorted.filter(p=>!p.onField).sort((a,b)=>{
+        const diff=liveStat(b,'benchMs')-liveStat(a,'benchMs');
+        return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
+      });
       $('activeCount').textContent=outfield.length+' utespelare'+(gk?' + MV':'');$('goalkeeperSlot').innerHTML='';
       if(gk)$('goalkeeperSlot').appendChild(goalkeeperCard(gk));
       else {
