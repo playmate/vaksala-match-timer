@@ -204,7 +204,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.12.9';
+    const VERSION='1.13.0';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -292,7 +292,7 @@
       settle();selected.onField=true;selected.stintMs=0;selectedSwapId=null;save();render();
     }
 
-    function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">Halvlek: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
+    function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">${p.onField?'På plan i halvleken':'På bänken i halvleken'}: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
     function goalkeeperCard(p){
       const wrap=document.createElement('div');wrap.className='gk-swipe';
       const remove=document.createElement('button');remove.className='gk-remove';remove.textContent='Ta bort';
