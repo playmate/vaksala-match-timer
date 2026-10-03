@@ -60,10 +60,7 @@
     .match-helper{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:12px 1px 0;padding:8px 10px;border:1px solid var(--line);border-radius:13px;background:#0f1821;color:#8e9ba8;font-size:10px;font-weight:850}
     .match-helper strong{color:#dce7ef}.latest-event{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .undo-btn{border:1px solid #34495c;background:#1b2936;color:#c9d5df;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:900}.undo-btn:disabled{opacity:.3}
-    .field-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 7px;color:#91a0ad;font-size:10px;font-weight:850}.field-count{color:#a7e0bc}.next-swap{color:#d7b77f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .player.next-bench{box-shadow:inset 0 0 0 1px rgba(240,180,86,.25),0 0 0 2px rgba(240,180,86,.16)}
-    .next-badge{display:block;width:max-content;margin:7px auto 0;border:1px solid rgba(240,180,86,.42);background:#4a381d;color:#f3d49d;border-radius:7px;padding:2px 6px;font-size:7px;font-weight:950;letter-spacing:.05em;line-height:1.2}
-    .player.time-warn .stint::after,.player.time-danger .stint::after{content:'●';display:inline-block;margin-left:4px;font-size:8px;vertical-align:2px}.player.time-warn .stint::after{color:#f0b456}.player.time-danger .stint::after{color:#ff6565}
+    .player.time-warn,.player.time-danger{animation:stintBorderPulse 1.35s ease-in-out infinite}.player.time-warn{border-color:rgba(240,180,86,.58)}.player.time-danger{border-color:rgba(239,106,106,.72);animation-name:stintBorderPulseDanger}@keyframes stintBorderPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,180,86,0)}50%{box-shadow:0 0 0 2px rgba(240,180,86,.30)}}@keyframes stintBorderPulseDanger{0%,100%{box-shadow:0 0 0 0 rgba(239,106,106,0)}50%{box-shadow:0 0 0 2px rgba(239,106,106,.36)}}
     .clock-wrap.time-up{border-color:rgba(239,106,106,.72)!important;box-shadow:inset 0 0 0 1px rgba(239,106,106,.18)!important}.clock-wrap.time-up .clock-sub{color:#f29a9a;font-weight:900}
     .roster-tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}.roster-tool{border:1px solid #34495c;background:#172431;color:#cfdae4;border-radius:11px;padding:9px 6px;font-size:9px;font-weight:900}
     .autosave-status{text-align:center;margin-top:8px;color:#667583;font-size:9px;font-weight:800;min-height:12px}.autosave-status.saved{color:#78b993}
@@ -137,7 +134,6 @@
     </section>
 
     <section class="section section-field">
-      <div class="field-meta"><span class="field-count" id="fieldCount">0/4 utespelare</span><span class="next-swap" id="nextSwapHint"></span></div>
       <div class="goalkeeper-slot" id="goalkeeperSlot"></div>
       <div class="players field" id="activePlayers"></div>
     </section>
@@ -256,7 +252,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.15.2-preview';
+    const VERSION='1.15.3-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -389,7 +385,7 @@
       pushUndo('spelare in');selected.onField=true;selected.stintMs=0;logEvent('Byte: '+selected.name+' in','swap');selectedSwapId=null;save();render();
     }
 
-    function playerCard(p,isNextBench=false){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)} ${isNextBench?'next-bench':''}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">${p.onField?'På plan i halvleken':'På bänken i halvleken'}: ${fmt(half)}</div>${isNextBench?'<span class="next-badge">NÄSTA</span>':''}`;b.onclick=()=>chooseForSwap(p);return b}
+    function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">${p.onField?'På plan i halvleken':'På bänken i halvleken'}: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
     function goalkeeperCard(p){
       const wrap=document.createElement('div');wrap.className='gk-swipe';
       const remove=document.createElement('button');remove.className='gk-remove';remove.textContent='Ta bort';
@@ -447,9 +443,6 @@
         const diff=liveStint(b)-liveStint(a);
         return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
       });
-      const nextBench=bench[0]||null;
-      $('fieldCount').textContent=outfield.length+'/'+state.outfieldCount+' utespelare';
-      $('nextSwapHint').textContent=nextBench?'Längst bänk: '+nextBench.name+' · '+fmt(liveStint(nextBench)):'';
       const latest=(state.events||[]).at(-1);
       $('latestEvent').textContent=latest?fmt(latest.timeMs)+' · '+latest.text:'Ingen händelse ännu';
       $('undoBtn').disabled=!undoStack.length;
@@ -477,7 +470,7 @@
         $('goalkeeperSlot').appendChild(emptyGk);
       }
       $('activePlayers').innerHTML='';$('benchPlayers').innerHTML='';
-      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p,false)));
+      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p)));
       const emptySlots=Math.max(0,state.outfieldCount-outfield.length);
       for(let i=0;i<emptySlots;i++){
         const empty=document.createElement('button');
@@ -487,7 +480,7 @@
         $('activePlayers').appendChild(empty);
       }
       if(!bench.length)$('benchPlayers').innerHTML='<div class="empty">Ingen spelare på bänken</div>';
-      bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p,nextBench?.id===p.id)));
+      bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p)));
       $('manageList').innerHTML='';sorted.forEach(p=>{const row=document.createElement('div');row.className='roster-row';row.innerHTML='<span class="roster-name">'+escapeHtml(p.name)+'</span><button class="roster-toggle '+(p.enabled?'enabled':'')+'" aria-label="'+(p.enabled?'Avaktivera ':'Aktivera ')+escapeHtml(p.name)+'" aria-pressed="'+(p.enabled?'true':'false')+'"></button>';row.querySelector('button').onclick=()=>togglePlayerEnabled(p.id);$('manageList').appendChild(row)});
       $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;$('outfieldValue').textContent=state.outfieldCount;$('useLastLineup').disabled=!history.length;
       renderHistory();
