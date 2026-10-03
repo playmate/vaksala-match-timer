@@ -57,10 +57,6 @@
 </head>
 <body>
   <main class="app">
-    <header class="topbar">
-      <div class="half-selector" id="topHalfSelector"></div>
-    </header>
-
     <section class="hero">
       <div class="score-row">
         <div class="team">
@@ -89,8 +85,9 @@
       </div>
       <div class="main-actions">
         <button class="btn primary" id="startPauseBtn">Starta</button>
-        <button class="btn secondary" id="halfBtn">Nästa halvlek</button>
+        <button class="btn secondary" id="halfBtn">Halvlek 1 / 2</button>
       </div>
+      <button class="btn danger" id="finishNowBtn" style="width:100%;margin-top:9px">Avsluta match</button>
     </section>
 
     <section class="section section-field">
@@ -137,6 +134,12 @@
     <div class="sheet-head"><div class="sheet-title">Historik</div><button class="close" data-close="historySheet">×</button></div>
     <div id="historyContent"></div>
   </div></div>
+
+  <dialog id="halfPickerDialog"><div class="modal">
+    <h2>Välj halvlek</h2><p>Byt till den halvlek som ska vara aktiv.</p>
+    <div class="scorer-list" id="halfPickerList"></div>
+    <div class="modal-actions"><button class="secondary" id="halfPickerCancel">Avbryt</button></div>
+  </div></dialog>
 
   <dialog id="opponentDialog"><div class="modal">
     <h2>Ny match</h2><p>Skriv in motståndarlaget. Vaksala SK är alltid hemmalag som standard.</p>
@@ -190,7 +193,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.11.1';
+    const VERSION='1.12.0';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -295,8 +298,6 @@
 
     function render(){
       $('settingsVersion').textContent=`Vaksala SK Match · version ${VERSION}`;
-      const selector=$('topHalfSelector');selector.innerHTML='';
-      for(let h=1;h<=state.totalHalves;h++){const b=document.createElement('button');b.className='half-choice'+(h===state.half?' active':'');b.textContent='Halvlek '+h;b.onclick=()=>setCurrentHalf(h);selector.appendChild(b)}
       $('opponentName').textContent=state.opponent||'Motståndare';$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('matchTotal').textContent='Total matchtid '+fmt(totalElapsed());
       $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;
       const elapsed=liveElapsed();
@@ -306,7 +307,7 @@
       $('clock').classList.toggle('over',over);
       $('overtime').textContent=over?'+ '+fmt(elapsed-regulation):'';
       $('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · övertid':''}`;
-      $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent=state.half>=state.totalHalves?'Avsluta match':'Nästa halvlek';
+      $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent='Halvlek '+state.half+' / '+state.totalHalves;
       const sorted=[...state.players].sort((a,b)=>{
         if(a.enabled!==b.enabled)return a.enabled?-1:1;
         return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
@@ -493,7 +494,18 @@
     function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))}
 
     $('startPauseBtn').onclick=()=>{if(state.running){settle();state.running=false;state.startedAt=null}else{state.running=true;state.startedAt=Date.now()}save();render()};
-    $('halfBtn').onclick=()=>{settle();if(state.half>=state.totalHalves){state.running=false;state.startedAt=null;save();render();renderFinishStats();$('finishMatchDialog').showModal();return}state.half++;state.halfElapsed=state.halfElapsed||{};if(state.halfElapsed[state.half]==null)state.halfElapsed[state.half]=0;state.elapsedMs=state.halfElapsed[state.half];state.players.forEach(p=>p.stintMs=0);if(state.running)state.startedAt=Date.now();save();render()};
+    $('halfBtn').onclick=()=>{
+      const list=$('halfPickerList');list.innerHTML='';
+      for(let h=1;h<=state.totalHalves;h++){
+        const b=document.createElement('button');
+        b.className='scorer-btn'+(h===state.half?' active':'');
+        b.textContent='Halvlek '+h;
+        b.onclick=()=>{setCurrentHalf(h);$('halfPickerDialog').close()};
+        list.appendChild(b);
+      }
+      $('halfPickerDialog').showModal();
+    };
+    $('finishNowBtn').onclick=()=>{settle();state.running=false;state.startedAt=null;save();render();renderFinishStats();$('finishMatchDialog').showModal()};
     $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
     $('minutesMinus').onclick=()=>{state.halfMinutes=Math.max(1,state.halfMinutes-1);save();render()};$('minutesPlus').onclick=()=>{state.halfMinutes=Math.min(120,state.halfMinutes+1);save();render()};
     $('halvesMinus').onclick=()=>{state.totalHalves=Math.max(1,state.totalHalves-1);if(state.half>state.totalHalves)state.half=state.totalHalves;save();render()};$('halvesPlus').onclick=()=>{state.totalHalves=Math.min(10,state.totalHalves+1);save();render()};
@@ -560,6 +572,7 @@
       $('finishStats').innerHTML='<div class="hist-top"><span class="hist-name">'+TEAM+' - '+escapeHtml(state.opponent||'Motståndare')+'</span><span class="hist-score">'+state.homeScore+'–'+state.awayScore+'</span></div><div class="hist-date">Total matchtid '+fmt(totalElapsed())+'</div>'+stats+'<div class="hist-subtitle">Målhändelser</div>'+goals;
     }
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
+    $('halfPickerCancel').onclick=()=>$('halfPickerDialog').close();
     $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
     $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();openOpponentDialog()};
     $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();openOpponentDialog()};
