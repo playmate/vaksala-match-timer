@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.3';
+    const VERSION='1.4.4';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -379,8 +379,8 @@
     }
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
     $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
-    $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();prepareNewMatch()};
-    $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();prepareNewMatch()};
+    $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();openOpponentDialog()};
+    $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();openOpponentDialog()};
     $('cancelGoalkeeperSwap').onclick=()=>{pendingGoalkeeperSwap=null;$('confirmGoalkeeperSwap').close()};
     $('confirmGoalkeeperSwapBtn').onclick=()=>{if(!pendingGoalkeeperSwap)return;$('confirmGoalkeeperSwap').close();const selected=state.players.find(x=>x.id===pendingGoalkeeperSwap.selectedId),target=state.players.find(x=>x.id===pendingGoalkeeperSwap.targetId);if(selected&&target)performSwap(selected,target)};
     $('opponentCancel').onclick=()=>{if(state.opponent)$('opponentDialog').close()};$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
