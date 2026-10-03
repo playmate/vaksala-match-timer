@@ -32,7 +32,7 @@
     .clock-row{display:grid;grid-template-columns:minmax(64px,1fr) auto minmax(64px,1fr);align-items:center;gap:10px}
     .clock-adjust{justify-self:center;border:1px solid rgba(132,146,160,.16);background:rgba(132,146,160,.08);color:#6f7e8c;border-radius:14px;padding:10px 12px;font-size:11px;font-weight:900;min-width:64px}
     .clock-adjust:active{background:rgba(132,146,160,.16);color:#9eabb7}
-    .clock{font-size:clamp(48px,12vw,78px);font-weight:950;line-height:.95;letter-spacing:-.055em;font-variant-numeric:tabular-nums}.clock-sub{margin-top:7px;color:var(--muted);font-size:12px;font-weight:700}
+    .clock{font-size:clamp(48px,12vw,78px);font-weight:950;line-height:.95;letter-spacing:-.055em;font-variant-numeric:tabular-nums}.clock.over{color:var(--red)}.overtime{margin-top:6px;color:var(--red);font-size:22px;font-weight:950;font-variant-numeric:tabular-nums;min-height:26px}.clock-sub{margin-top:7px;color:var(--muted);font-size:12px;font-weight:700}
     .main-actions{display:grid;grid-template-columns:1.25fr 1fr;gap:9px;margin-top:14px}.btn{border:none;border-radius:16px;padding:14px 12px;font-weight:900}.primary{background:var(--green);color:#06110a}.secondary{background:#203041;color:#eef5fb}.danger{background:#3d2025;color:#ffdada}
 
     .section{margin-top:18px}.section-head{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 2px 9px;padding:8px 12px;border-radius:14px}.section-title{font-size:18px;font-weight:900;text-align:center}.section-meta{position:absolute;right:12px;color:var(--muted);font-size:11px;font-weight:750;text-align:right}.section-field .section-head{background:rgba(83,213,139,.055);border:1px solid rgba(83,213,139,.10)}.section-field .section-title{color:#8fc9a7}.section-bench .section-head{background:rgba(240,180,86,.055);border:1px solid rgba(240,180,86,.10)}.section-bench .section-title{color:#c9a66f}.section-field .players.field{background:rgba(83,213,139,.045);border:1px solid rgba(83,213,139,.08);border-radius:18px;padding:7px}.section-bench .players.bench{background:rgba(240,180,86,.045);border:1px solid rgba(240,180,86,.08);border-radius:18px;padding:7px}
@@ -84,6 +84,7 @@
           <div class="clock" id="clock">00:00</div>
           <button class="clock-adjust" id="plusTen" aria-label="Lägg till 10 sekunder">+10 sek</button>
         </div>
+        <div class="overtime" id="overtime"></div>
         <div class="clock-sub" id="clockStatus">Matchen är pausad</div>
       </div>
       <div class="main-actions">
@@ -189,7 +190,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.7.1';
+    const VERSION='1.7.2';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -297,8 +298,14 @@
       const selector=$('topHalfSelector');selector.innerHTML='';
       for(let h=1;h<=state.totalHalves;h++){const b=document.createElement('button');b.className='half-choice'+(h===state.half?' active':'');b.textContent='Halvlek '+h;b.onclick=()=>setCurrentHalf(h);selector.appendChild(b)}
       $('opponentName').textContent=state.opponent||'Motståndare';$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('matchTotal').textContent='Total matchtid '+fmt(totalElapsed());
-      $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;$('clock').textContent=fmt(liveElapsed());
-      const over=liveElapsed()>=state.halfMinutes*60000;$('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · ordinarie tid passerad':''}`;
+      $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;
+      const elapsed=liveElapsed();
+      const regulation=state.halfMinutes*60000;
+      const over=elapsed>regulation;
+      $('clock').textContent=fmt(over?regulation:elapsed);
+      $('clock').classList.toggle('over',over);
+      $('overtime').textContent=over?'+ '+fmt(elapsed-regulation):'';
+      $('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · övertid':''}`;
       $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent=state.half>=state.totalHalves?'Avsluta match':'Nästa halvlek';
       const sorted=[...state.players].sort((a,b)=>{
         if(a.enabled!==b.enabled)return a.enabled?-1:1;
