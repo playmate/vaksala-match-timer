@@ -103,9 +103,10 @@
       <div class="players bench" id="benchPlayers"></div>
     </section>
 
-    <div class="settings-actions" style="grid-template-columns:1fr 1fr;margin-top:20px">
+    <div class="settings-actions" style="grid-template-columns:1fr 1fr 1fr;margin-top:20px">
       <button class="btn danger" id="newMatchBtnBottom">Ny match</button>
       <button class="btn danger" id="resetMatchBtn">Återställ match</button>
+      <button class="btn danger" id="clearFieldBtn">Töm planen</button>
     </div>
 
     <details class="manage" id="managePanel">
@@ -160,6 +161,11 @@
     <div class="modal-actions"><button class="secondary" id="cancelReset">Avbryt</button><button class="danger" id="confirmReset">Återställ</button></div>
   </div></dialog>
 
+  <dialog id="confirmClearFieldDialog"><div class="modal">
+    <h2>Töm planen?</h2><p>Alla utespelare och målvakten flyttas till bänken. Ställning, mål, tider och övrig matchdata behålls.</p>
+    <div class="modal-actions"><button class="secondary" id="cancelClearField">Avbryt</button><button class="danger" id="confirmClearField">Töm planen</button></div>
+  </div></dialog>
+
   <dialog id="confirmGoalkeeperSwap"><div class="modal">
     <h2>Byta målvakt?</h2><p id="goalkeeperSwapText">Bekräfta målvaktsbytet.</p>
     <div class="modal-actions"><button class="secondary" id="cancelGoalkeeperSwap">Avbryt</button><button class="primary" id="confirmGoalkeeperSwapBtn">Byt målvakt</button></div>
@@ -182,7 +188,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.6.3';
+    const VERSION='1.6.4';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -414,8 +420,19 @@
       state={...defaultState(),...keep,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();
     }
+    function clearField(){
+      settle();
+      state.players.forEach(p=>{if(p.onField){p.onField=false;p.stintMs=0}});
+      state.goalkeeperId=null;
+      selectedSwapId=null;
+      pendingGoalkeeperSwap=null;
+      goalkeeperSwipedOpen=false;
+      save();
+      render();
+    }
     $('newMatchBtnBottom').onclick=()=>$('confirmNewDialog').showModal();$('cancelNew').onclick=()=>$('confirmNewDialog').close();$('confirmNew').onclick=()=>{$('confirmNewDialog').close();prepareNewMatch()};
     $('resetMatchBtn').onclick=()=>$('confirmResetDialog').showModal();$('cancelReset').onclick=()=>$('confirmResetDialog').close();$('confirmReset').onclick=()=>{$('confirmResetDialog').close();resetCurrentMatch()};
+    $('clearFieldBtn').onclick=()=>$('confirmClearFieldDialog').showModal();$('cancelClearField').onclick=()=>$('confirmClearFieldDialog').close();$('confirmClearField').onclick=()=>{$('confirmClearFieldDialog').close();clearField()};
     function renderFinishStats(){
       const players=state.players.filter(p=>p.enabled||totalPlay(p)>0).sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
       let rows=players.map(p=>{
