@@ -45,9 +45,8 @@
     .section{margin-top:10px}.section-head{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin:0 2px 9px;padding:8px 12px;border-radius:14px}.section-title{font-size:18px;font-weight:900;text-align:center}.section-meta{position:absolute;right:12px;color:var(--muted);font-size:11px;font-weight:750;text-align:right}.section-field .section-head{background:rgba(83,213,139,.055);border:1px solid rgba(83,213,139,.10)}.section-field .section-title{color:#8fc9a7}.section-bench .section-head{background:rgba(240,180,86,.055);border:1px solid rgba(240,180,86,.10)}.section-bench .section-title{color:#c9a66f}.section-field .players.field{background:rgba(83,213,139,.18);border:1px solid rgba(83,213,139,.38);border-radius:16px;padding:5px}.section-bench .players.bench{background:rgba(240,180,86,.18);border:1px solid rgba(240,180,86,.38);border-radius:16px;padding:5px}
     .goalkeeper-slot{margin-bottom:6px;padding:4px;border-radius:16px;background:rgba(103,183,255,.11);border:1px solid rgba(103,183,255,.20)}.gk-swipe{position:relative;overflow:hidden;border-radius:18px}.gk-remove{position:absolute;inset:0 0 0 auto;width:96px;border:none;background:#7d242b;color:#ffe3e3;font-weight:950;display:flex;align-items:center;justify-content:center}.gk-card{position:relative;z-index:1;width:100%;border:1px solid rgba(103,183,255,.68);background:linear-gradient(180deg,#193246,#14293a);box-shadow:inset 0 0 0 1px rgba(103,183,255,.10);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;gap:6px 10px;text-align:left;transition:transform .18s ease;touch-action:pan-y}.gk-card.swiped{transform:translateX(-96px)}.gk-badge{grid-row:1/3;align-self:center;background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{grid-column:2;text-align:center;font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#a7d4f7}.gk-time{grid-column:3;grid-row:1/3;align-self:center;font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2;text-align:center;color:#7391a8;font-size:11px;font-weight:800;margin-top:-2px;font-variant-numeric:tabular-nums}
     .players.field{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.players.bench{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-    .player{position:relative;text-align:center;border:1px solid var(--line);background:var(--card);border-radius:15px;padding:8px 7px;min-width:0;color:var(--text);transition:.12s transform;touch-action:manipulation}.player:active{transform:scale(.98)}.player.active{border-color:rgba(83,213,139,.62);background:linear-gradient(180deg,#183328,#14271f);box-shadow:inset 0 0 0 1px rgba(83,213,139,.10)}.player.bench{border-color:rgba(240,180,86,.58);background:linear-gradient(180deg,#302719,#241f17);box-shadow:inset 0 0 0 1px rgba(240,180,86,.08)}.player.selected,.gk-card.selected{outline:3px solid #63b3ff;outline-offset:2px}.player.time-warn .current-stint{color:#f0b456}.player.time-danger .current-stint{color:#ff6565}
-    .player-name{text-align:center;font-size:17px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player.active .player-name{color:#9fd9b5}.player.bench .player-name{color:#d8b27a}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}
-    .player-times{display:grid;gap:5px;margin-top:7px}.player-time-main{display:flex;flex-direction:column;align-items:center}.current-stint{font-size:18px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.current-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.05em;font-weight:850}.player-time-totals{display:grid;grid-template-columns:1fr 1fr;gap:5px}.player-time-total{border-radius:9px;padding:5px 3px;background:rgba(255,255,255,.025)}.player-time-total strong{display:block;font-size:12px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1.05}.player-time-total span{display:block;margin-top:3px;font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.035em;color:#758493}.player-time-total.play strong{color:#9be1b7}.player-time-total.bench strong{color:#dfbc82}
+    .player{position:relative;text-align:center;border:1px solid var(--line);background:var(--card);border-radius:15px;padding:8px 7px;min-width:0;color:var(--text);transition:transform .16s ease,opacity .16s ease;touch-action:pan-y;will-change:transform}.player:active{transform:scale(.98)}.player.sort-swiping{transition:none}.player.sort-in-left{animation:sortInLeft .18s ease-out}.player.sort-in-right{animation:sortInRight .18s ease-out}@keyframes sortInLeft{from{transform:translateX(28px);opacity:.35}to{transform:translateX(0);opacity:1}}@keyframes sortInRight{from{transform:translateX(-28px);opacity:.35}to{transform:translateX(0);opacity:1}}.player.active{border-color:rgba(83,213,139,.62);background:linear-gradient(180deg,#183328,#14271f);box-shadow:inset 0 0 0 1px rgba(83,213,139,.10)}.player.bench{border-color:rgba(240,180,86,.58);background:linear-gradient(180deg,#302719,#241f17);box-shadow:inset 0 0 0 1px rgba(240,180,86,.08)}.player.selected,.gk-card.selected{outline:3px solid #63b3ff;outline-offset:2px}.player.time-warn .current-stint{color:#f0b456}.player.time-danger .current-stint{color:#ff6565}
+    .player-name{text-align:center;font-size:17px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player.active .player-name{color:#9fd9b5}.player.bench .player-name{color:#d8b27a}.player-times{display:grid;gap:5px;margin-top:7px}.player-time-main{display:flex;flex-direction:column;align-items:center}.current-stint{font-size:18px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.current-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.05em;font-weight:850}.player-time-totals{display:grid;grid-template-columns:1fr 1fr;gap:5px}.player-time-total{border-radius:9px;padding:5px 3px;background:rgba(255,255,255,.025)}.player-time-total strong{display:block;font-size:12px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1.05}.player-time-total span{display:block;margin-top:3px;font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.035em;color:#758493}.player-time-total.play strong{color:#9be1b7}.player-time-total.bench strong{color:#dfbc82}
     .empty{grid-column:1/-1;width:100%;color:#7d8995;background:#111820;border:1px dashed #344250;border-radius:16px;padding:18px;text-align:center;font-size:13px;font-weight:800}.empty-field-slot{min-height:86px;color:#64717d;background:rgba(125,137,149,.055);border:1px dashed rgba(125,137,149,.22);border-radius:17px;padding:10px;font-size:11px;font-weight:850;display:flex;align-items:center;justify-content:center;text-align:center}
 
     details.manage{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}details.manage summary{list-style:none;display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 4px;color:var(--text);font-weight:900;cursor:pointer;font-size:18px;text-align:center}details.manage summary::after{content:'▾';font-size:13px;color:var(--muted);transition:transform .18s ease}details.manage[open] summary::after{transform:rotate(180deg)}details.manage summary::-webkit-details-marker{display:none}.manage-body{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:13px}.add-row{display:flex;gap:8px}.input{width:100%;background:#0d151e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px 13px;outline:none}.add-row button{border:none;border-radius:13px;background:#243749;color:white;padding:0 14px;font-weight:850}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.chip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#0f1821;border-radius:999px;padding:7px 8px 7px 11px;font-size:12px;font-weight:800}.chip button{width:22px;height:22px;border:none;border-radius:50%;background:#2d1b1e;color:#ffb5b5;padding:0}.roster-list{display:grid;gap:7px}.roster-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;background:#0f1821;border:1px solid var(--line);border-radius:13px;padding:9px 10px}.roster-name{grid-column:2;font-size:16px;font-weight:900;text-align:center}.roster-toggle{grid-column:3;justify-self:end;position:relative;width:44px;height:24px;border:1px solid #3a4b5c;border-radius:999px;background:#2a3744;padding:0;flex:0 0 auto;transition:background .16s ease,border-color .16s ease}.roster-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#aeb9c3;transition:transform .16s ease,background .16s ease}.roster-toggle.enabled{background:#24583b;border-color:rgba(83,213,139,.55)}.roster-toggle.enabled::after{transform:translateX(20px);background:#8ae5af}
@@ -329,7 +328,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.61.4-preview';
+    const VERSION='1.61.5-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -353,6 +352,8 @@
     let transientStatsMatch=null;
     let pendingNewMatchEnabledNames=null;
     let pendingNewMatchBackup=null;
+    let playerSortMode=0;
+    let pendingPlayerSortSwipe=null;
     const $=id=>document.getElementById(id);
 
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
@@ -430,6 +431,23 @@
       return totalBench(p)+((state.running&&state.startedAt&&p.enabled&&!p.onField)?Date.now()-state.startedAt:0);
     }
 
+    function stablePlayerCompare(a,b){
+      const ai=TEAM_ROSTER.indexOf(a.name),bi=TEAM_ROSTER.indexOf(b.name);
+      if(ai>=0&&bi>=0&&ai!==bi)return ai-bi;
+      if(ai>=0&&bi<0)return -1;
+      if(ai<0&&bi>=0)return 1;
+      return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
+    }
+    function playerSortValue(p){
+      if(playerSortMode===1)return liveTotalPlay(p);
+      if(playerSortMode===2)return liveTotalBench(p);
+      return liveStint(p);
+    }
+    function comparePlayersBySelectedTime(a,b){
+      const diff=playerSortValue(b)-playerSortValue(a);
+      return diff||stablePlayerCompare(a,b);
+    }
+
     function togglePlayerEnabled(id){
       settle();
       const p=state.players.find(x=>x.id===id);if(!p)return;
@@ -479,7 +497,6 @@
       b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;
       b.innerHTML=`
         <div class="player-name">${escapeHtml(p.name)}</div>
-        <span class="state-dot"></span>
         <div class="player-times">
           <div class="player-time-main">
             <div class="current-stint">${fmt(liveStint(p))}</div>
@@ -490,7 +507,57 @@
             <div class="player-time-total bench"><strong>${fmt(liveTotalBench(p))}</strong><span>Bänktid</span></div>
           </div>
         </div>`;
-      b.onclick=()=>chooseForSwap(p);
+      let startX=0,startY=0,dragging=false,swiped=false;
+      const allCards=()=>Array.from(document.querySelectorAll('#activePlayers .player,#benchPlayers .player'));
+      b.addEventListener('pointerdown',e=>{
+        startX=e.clientX;startY=e.clientY;dragging=false;swiped=false;
+        b.setPointerCapture?.(e.pointerId);
+      });
+      b.addEventListener('pointermove',e=>{
+        const dx=e.clientX-startX,dy=e.clientY-startY;
+        if(Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)){
+          dragging=true;
+          const clamped=Math.max(-46,Math.min(46,dx));
+          allCards().forEach(card=>{
+            card.classList.add('sort-swiping');
+            card.style.transform=`translateX(${clamped}px)`;
+            card.style.opacity=String(1-Math.min(.35,Math.abs(clamped)/150));
+          });
+        }
+      });
+      b.addEventListener('pointerup',e=>{
+        const dx=e.clientX-startX,dy=e.clientY-startY;
+        const cards=allCards();
+        if(Math.abs(dx)>=28&&Math.abs(dx)>Math.abs(dy)*1.2){
+          swiped=true;
+          const dir=dx<0?-1:1;
+          playerSortMode=dir<0?(playerSortMode+1)%3:(playerSortMode+2)%3;
+          cards.forEach(card=>{
+            card.classList.remove('sort-swiping');
+            card.style.transform=`translateX(${dir<0?-64:64}px)`;
+            card.style.opacity='0';
+          });
+          pendingPlayerSortSwipe=dir<0?'left':'right';
+          setTimeout(()=>render(),90);
+        }else if(dragging){
+          cards.forEach(card=>{
+            card.classList.remove('sort-swiping');
+            card.style.transform='';
+            card.style.opacity='';
+          });
+        }
+      });
+      b.addEventListener('pointercancel',()=>{
+        allCards().forEach(card=>{
+          card.classList.remove('sort-swiping');
+          card.style.transform='';
+          card.style.opacity='';
+        });
+      });
+      b.addEventListener('click',e=>{
+        if(swiped||dragging){e.preventDefault();e.stopPropagation();return}
+        chooseForSwap(p);
+      });
       return b;
     }
     function goalkeeperCard(p){
@@ -542,14 +609,8 @@
       });
       const matchPlayers=sorted.filter(p=>p.enabled);
       const gk=matchPlayers.find(p=>p.id===state.goalkeeperId&&p.onField);
-      const outfield=matchPlayers.filter(p=>p.onField&&p.id!==state.goalkeeperId).sort((a,b)=>{
-        const diff=liveStint(b)-liveStint(a);
-        return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
-      });
-      const bench=matchPlayers.filter(p=>!p.onField).sort((a,b)=>{
-        const diff=liveStint(b)-liveStint(a);
-        return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
-      });
+      const outfield=matchPlayers.filter(p=>p.onField&&p.id!==state.goalkeeperId).sort(comparePlayersBySelectedTime);
+      const bench=matchPlayers.filter(p=>!p.onField).sort(comparePlayersBySelectedTime);
       const latest=(state.events||[]).at(-1);
       $('latestEvent').textContent=latest?fmt(latest.timeMs)+' · '+latest.text:'Ingen händelse ännu';
       $('undoBtn').disabled=!undoStack.length;
@@ -588,6 +649,11 @@
       }
       if(!bench.length)$('benchPlayers').innerHTML='<div class="empty">Ingen spelare på bänken</div>';
       bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p)));
+      if(pendingPlayerSortSwipe){
+        const cls=pendingPlayerSortSwipe==='left'?'sort-in-left':'sort-in-right';
+        document.querySelectorAll('#activePlayers .player,#benchPlayers .player').forEach(card=>card.classList.add(cls));
+        pendingPlayerSortSwipe=null;
+      }
       $('manageList').innerHTML='';sorted.forEach(p=>{const row=document.createElement('div');row.className='roster-row';row.innerHTML='<span class="roster-name">'+escapeHtml(p.name)+'</span><button class="roster-toggle '+(p.enabled?'enabled':'')+'" aria-label="'+(p.enabled?'Avaktivera ':'Aktivera ')+escapeHtml(p.name)+'" aria-pressed="'+(p.enabled?'true':'false')+'"></button>';row.querySelector('button').onclick=()=>togglePlayerEnabled(p.id);$('manageList').appendChild(row)});
       $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;$('outfieldValue').textContent=state.outfieldCount;$('useLastLineup').disabled=!history.length;
       renderHistory();
