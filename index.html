@@ -57,6 +57,19 @@
 
     dialog{border:none;border-radius:24px;background:#111b25;color:var(--text);padding:0;width:min(430px,calc(100% - 24px));box-shadow:0 30px 90px rgba(0,0,0,.58)}dialog::backdrop{background:rgba(0,0,0,.68)}.modal{padding:18px}.modal h2{margin:0 0 7px;font-size:21px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.modal-actions button{border:none;border-radius:13px;padding:12px;font-weight:900}.reset-options{display:grid;gap:8px;margin-top:12px}.reset-option{width:100%;border:1px solid #34495c;background:#172431;color:var(--text);border-radius:14px;padding:12px 13px;text-align:left}.reset-option strong{display:block;font-size:14px;font-weight:950}.reset-option span{display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:750;line-height:1.35}.reset-option.danger-option{border-color:rgba(239,106,106,.42);background:#2b1c20}.reset-option.danger-option span{color:#c99b9b}.scorer-groups{display:grid;gap:12px;margin-top:12px}.scorer-title{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.scorer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.scorer-btn{border:1px solid var(--line);background:#172431;color:white;border-radius:12px;padding:10px;text-align:left;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scorer-btn.active{border-color:rgba(83,213,139,.42);background:#173025;color:#c9f2d8}.scorer-btn.goalkeeper-choice{border-color:rgba(103,183,255,.46);background:#1b3448;color:#b9ddf7}.scorer-btn.bench-choice{border-color:rgba(240,180,86,.50);background:#302719;color:#e7c38a}.scorer-btn.no-scorer{grid-column:1/-1;text-align:center;color:#aab7c3}.goal-cancel{background:#4a3b1f!important;color:#f2d59a!important;border:1px solid rgba(239,106,106,.48)!important}.goal-no-scorer{background:#1b3448!important;color:#b9ddf7!important;border:1px solid rgba(103,183,255,.42)!important}.status-on{color:var(--green)}.status-bench{color:var(--yellow)}
 
+    .match-helper{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:12px 1px 0;padding:8px 10px;border:1px solid var(--line);border-radius:13px;background:#0f1821;color:#8e9ba8;font-size:10px;font-weight:850}
+    .match-helper strong{color:#dce7ef}.latest-event{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .undo-btn{border:1px solid #34495c;background:#1b2936;color:#c9d5df;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:900}.undo-btn:disabled{opacity:.3}
+    .field-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 7px;color:#91a0ad;font-size:10px;font-weight:850}.field-count{color:#a7e0bc}.next-swap{color:#d7b77f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .player.next-bench{box-shadow:inset 0 0 0 1px rgba(240,180,86,.25),0 0 0 2px rgba(240,180,86,.16)}
+    .player.next-bench::after{content:'NÄSTA';position:absolute;left:6px;top:6px;border:1px solid rgba(240,180,86,.42);background:#4a381d;color:#f3d49d;border-radius:7px;padding:2px 4px;font-size:6px;font-weight:950;letter-spacing:.05em}
+    .player.time-warn .stint::after,.player.time-danger .stint::after{content:'●';display:inline-block;margin-left:4px;font-size:8px;vertical-align:2px}.player.time-warn .stint::after{color:#f0b456}.player.time-danger .stint::after{color:#ff6565}
+    .clock-wrap.time-up{border-color:rgba(239,106,106,.72)!important;box-shadow:inset 0 0 0 1px rgba(239,106,106,.18)!important}.clock-wrap.time-up .clock-sub{color:#f29a9a;font-weight:900}
+    .roster-tools{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}.roster-tool{border:1px solid #34495c;background:#172431;color:#cfdae4;border-radius:11px;padding:9px 6px;font-size:9px;font-weight:900}
+    .autosave-status{text-align:center;margin-top:8px;color:#667583;font-size:9px;font-weight:800;min-height:12px}.autosave-status.saved{color:#78b993}
+    .stats-spread{display:flex;justify-content:space-between;gap:10px;margin:9px 0 4px;padding:8px 10px;border-radius:11px;background:#101a24;border:1px solid #243442;color:#8492a0;font-size:10px;font-weight:850}.stats-spread strong{color:#d8e3ec}
+    .hist-meta-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;color:#7f8e9c;font-size:9px;font-weight:750}.hist-meta-row span{padding-right:7px;border-right:1px solid #273644}.hist-meta-row span:last-child{border-right:none}
+    .period-confirm-note{color:#d7b77f!important}
     @media(max-width:560px){.players.field,.players.bench{gap:5px}.player{padding:9px 7px}.player-name{font-size:16px}.stint{font-size:17px}.stint-label{font-size:7px}.half-total{font-size:8px}.settings-grid{grid-template-columns:1fr}.setting.full{grid-column:auto}}
     @media(max-width:560px) and (min-height:720px){
       .app{padding-top:68px}
@@ -117,9 +130,14 @@
         <div class="half-inline" id="halfInline"></div>
       </div>
       <button class="btn danger" id="finishNowBtn" style="width:100%;margin-top:9px">Avsluta match</button>
+      <div class="match-helper">
+        <div class="latest-event" id="latestEvent">Ingen händelse ännu</div>
+        <button class="undo-btn" id="undoBtn" disabled>Ångra</button>
+      </div>
     </section>
 
     <section class="section section-field">
+      <div class="field-meta"><span class="field-count" id="fieldCount">0/4 utespelare</span><span class="next-swap" id="nextSwapHint"></span></div>
       <div class="goalkeeper-slot" id="goalkeeperSlot"></div>
       <div class="players field" id="activePlayers"></div>
     </section>
@@ -132,10 +150,16 @@
       <button class="btn danger" id="newMatchBtnBottom">Ny match</button>
       <button class="btn reset-action" id="resetMatchBtn">Återställ</button>
     </div>
+    <div class="autosave-status" id="autosaveStatus">Autospar aktivt</div>
 
     <details class="manage" id="managePanel">
       <summary><span>Spelare</span><span></span></summary>
       <div class="manage-body">
+        <div class="roster-tools">
+          <button class="roster-tool" id="activateAllPlayers">Aktivera alla</button>
+          <button class="roster-tool" id="deactivateAllPlayers">Avaktivera alla</button>
+          <button class="roster-tool" id="useLastLineup">Senaste lag</button>
+        </div>
         <div class="roster-list" id="manageList"></div>
       </div>
     </details>
@@ -216,6 +240,15 @@
     </div>
   </div></dialog>
 
+  <dialog id="periodConfirmDialog"><div class="modal">
+    <h2>Byta period?</h2>
+    <p class="period-confirm-note" id="periodConfirmText">Klockan går. Den pausas när du byter period.</p>
+    <div class="modal-actions">
+      <button class="secondary" id="periodConfirmCancel">Avbryt</button>
+      <button class="primary" id="periodConfirmOk">Byt och pausa</button>
+    </div>
+  </div></dialog>
+
   <dialog id="goalkeeperPickerDialog"><div class="modal">
     <h2>Välj målvakt</h2><p>Välj en spelare. Spelaren flyttas in på plan om den står på bänken.</p>
     <div class="scorer-list" id="goalkeeperPickerList"></div>
@@ -223,7 +256,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.14.7';
+    const VERSION='1.15.0-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -231,7 +264,7 @@
 
     const defaultState=()=>({
       opponent:'',homeScore:0,awayScore:0,half:1,totalHalves:2,halfMinutes:30,outfieldCount:4,goalkeeperId:null,
-      running:false,elapsedMs:0,halfElapsed:{1:0},startedAt:null,players:[],goals:[],createdAt:new Date().toISOString()
+      running:false,elapsedMs:0,halfElapsed:{1:0},startedAt:null,players:[],goals:[],events:[],createdAt:new Date().toISOString()
     });
 
     let state=loadState();
@@ -239,6 +272,9 @@
     let selectedSwapId=null;
     let pendingGoalkeeperSwap=null;
     let goalkeeperSwipedOpen=false;
+    let pendingHalf=null;
+    let undoStack=[];
+    let saveStatusTimer=null;
     const $=id=>document.getElementById(id);
 
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
@@ -258,9 +294,48 @@
         return existing||{id:uid(),name,enabled:false,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}};
       });
     }
-    function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.outfieldCount=Math.max(1,Math.min(8,Number(p.outfieldCount)||4));p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
+    function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.events=p.events||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.outfieldCount=Math.max(1,Math.min(8,Number(p.outfieldCount)||4));p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
     function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY))||[]}catch{return []}}
-    function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
+    function save(){
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+      localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+      const el=$('autosaveStatus');
+      if(el){
+        el.textContent='Sparad';
+        el.classList.add('saved');
+        clearTimeout(saveStatusTimer);
+        saveStatusTimer=setTimeout(()=>{el.textContent='Autospar aktivt';el.classList.remove('saved')},1100);
+      }
+    }
+    function cloneStateForUndo(){
+      const snap=structuredClone(state);
+      if(snap.running)snap.startedAt=null;
+      return snap;
+    }
+    function pushUndo(label){
+      settle();
+      undoStack.push({label,state:cloneStateForUndo()});
+      if(undoStack.length>20)undoStack.shift();
+    }
+    function undoLastAction(){
+      const entry=undoStack.pop();
+      if(!entry)return;
+      state=structuredClone(entry.state);
+      if(state.running)state.startedAt=Date.now();
+      selectedSwapId=null;pendingGoalkeeperSwap=null;pendingHalf=null;goalkeeperSwipedOpen=false;
+      save();render();
+    }
+    function logEvent(text,type='info'){
+      state.events=state.events||[];
+      state.events.push({id:uid(),text,type,half:state.half,timeMs:liveElapsed(),at:Date.now()});
+      if(state.events.length>80)state.events=state.events.slice(-80);
+    }
+    function periodLabel(h){
+      const names=['','Första','Andra','Tredje','Fjärde','Femte','Sjätte','Sjunde','Åttonde','Nionde','Tionde'];
+      if(h===1)return 'Första halvlek';
+      if(h===2)return 'Andra halvlek';
+      return (names[h]||h+':e')+' perioden';
+    }
     function applyDelta(target,delta){target.halfElapsed=target.halfElapsed||{};target.halfElapsed[target.half]=(Number(target.halfElapsed[target.half])||0)+delta;target.elapsedMs=target.halfElapsed[target.half];for(const p of target.players||[]){if(!p.enabled)continue;p.stintMs=(p.stintMs||0)+delta;if(p.onField&&p.id===target.goalkeeperId)p.goalkeeperMs=(p.goalkeeperMs||0)+delta;const hs=ensureHalfStatFor(p,target.half);if(p.onField)hs.playMs+=delta;else hs.benchMs+=delta}}
     function ensureHalfStatFor(p,half){p.halfStats=p.halfStats||{};if(!p.halfStats[half])p.halfStats[half]={playMs:0,benchMs:0};return p.halfStats[half]}
     function settle(){if(!state.running||!state.startedAt)return;const now=Date.now(),d=Math.max(0,now-state.startedAt);applyDelta(state,d);state.startedAt=now}
@@ -280,11 +355,14 @@
     }
     function timeClass(p){const ms=liveStint(p);return ms>=7*60000?'time-danger':ms>=5*60000?'time-warn':''}
     function performSwap(selected,p){
-      settle();
+      pushUndo('byte');
       const selectedWasGk=selected.id===state.goalkeeperId;
       const pWasGk=p.id===state.goalkeeperId;
+      const out=selected.onField?selected:p;
+      const incoming=selected.onField?p:selected;
       selected.onField=!selected.onField;p.onField=!p.onField;selected.stintMs=0;p.stintMs=0;
       if(selectedWasGk)state.goalkeeperId=p.id;else if(pWasGk)state.goalkeeperId=selected.id;
+      logEvent((selectedWasGk||pWasGk?'MV-byte: ':'Byte: ')+incoming.name+' in · '+out.name+' ut','swap');
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();
     }
     function chooseForSwap(p){
@@ -308,10 +386,10 @@
       if(!selected||selected.onField||!selected.enabled)return;
       const activeOutfield=state.players.filter(x=>x.enabled&&x.onField&&x.id!==state.goalkeeperId).length;
       if(activeOutfield>=state.outfieldCount)return;
-      settle();selected.onField=true;selected.stintMs=0;selectedSwapId=null;save();render();
+      pushUndo('spelare in');selected.onField=true;selected.stintMs=0;logEvent('Byte: '+selected.name+' in','swap');selectedSwapId=null;save();render();
     }
 
-    function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">${p.onField?'På plan i halvleken':'På bänken i halvleken'}: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
+    function playerCard(p,isNextBench=false){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)} ${isNextBench?'next-bench':''}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">${p.onField?'På plan i halvleken':'På bänken i halvleken'}: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
     function goalkeeperCard(p){
       const wrap=document.createElement('div');wrap.className='gk-swipe';
       const remove=document.createElement('button');remove.className='gk-remove';remove.textContent='Ta bort';
@@ -321,7 +399,7 @@
       let startX=0,startY=0,moved=false;
       b.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;moved=false;b.setPointerCapture?.(e.pointerId)});
       b.addEventListener('pointermove',e=>{const dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){moved=true;if(dx<0){goalkeeperSwipedOpen=true;b.classList.add('swiped')}else if(dx>0){goalkeeperSwipedOpen=false;b.classList.remove('swiped')}}});
-      b.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();return}if(goalkeeperSwipedOpen){goalkeeperSwipedOpen=false;b.classList.remove('swiped');return}chooseForSwap(p)});
+      b.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();return}if(goalkeeperSwipedOpen){goalkeeperSwipedOpen=false;b.classList.remove('swiped');return}openGoalkeeperPicker()});
       remove.onclick=()=>{settle();p.onField=false;p.stintMs=0;if(state.goalkeeperId===p.id)state.goalkeeperId=null;selectedSwapId=null;goalkeeperSwipedOpen=false;save();render()};
       wrap.appendChild(remove);wrap.appendChild(b);return wrap
     }
@@ -337,9 +415,11 @@
       $('clock').textContent=fmt(over?regulation:elapsed);
       $('clock').classList.toggle('over',over);
       $('overtime').textContent=over?'+ '+fmt(elapsed-regulation):'';
-      $('clockStatus').textContent=`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00${over?' · övertid':''}`;
+      const timeUp=elapsed>=regulation;
+      $('clockStatus').textContent=timeUp?`Ordinarie tid slut · ${state.running?'klockan går':'pausad'}`:`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00`;
       $('clockWrap').classList.toggle('running',state.running);
       $('clockWrap').classList.toggle('paused',!state.running);
+      $('clockWrap').classList.toggle('time-up',timeUp);
       $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');
       $('startPauseBtn').classList.toggle('pause',state.running);
       $('startPauseBtn').classList.toggle('resume',!state.running);
@@ -367,6 +447,12 @@
         const diff=liveStint(b)-liveStint(a);
         return diff||a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
       });
+      const nextBench=bench[0]||null;
+      $('fieldCount').textContent=outfield.length+'/'+state.outfieldCount+' utespelare';
+      $('nextSwapHint').textContent=nextBench?'Längst bänk: '+nextBench.name+' · '+fmt(liveStint(nextBench)):'';
+      const latest=(state.events||[]).at(-1);
+      $('latestEvent').textContent=latest?fmt(latest.timeMs)+' · '+latest.text:'Ingen händelse ännu';
+      $('undoBtn').disabled=!undoStack.length;
       $('goalkeeperSlot').innerHTML='';
       if(gk)$('goalkeeperSlot').appendChild(goalkeeperCard(gk));
       else {
@@ -391,7 +477,7 @@
         $('goalkeeperSlot').appendChild(emptyGk);
       }
       $('activePlayers').innerHTML='';$('benchPlayers').innerHTML='';
-      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p)));
+      outfield.forEach(p=>$('activePlayers').appendChild(playerCard(p,false)));
       const emptySlots=Math.max(0,state.outfieldCount-outfield.length);
       for(let i=0;i<emptySlots;i++){
         const empty=document.createElement('button');
@@ -401,20 +487,22 @@
         $('activePlayers').appendChild(empty);
       }
       if(!bench.length)$('benchPlayers').innerHTML='<div class="empty">Ingen spelare på bänken</div>';
-      bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p)));
+      bench.forEach(p=>$('benchPlayers').appendChild(playerCard(p,nextBench?.id===p.id)));
       $('manageList').innerHTML='';sorted.forEach(p=>{const row=document.createElement('div');row.className='roster-row';row.innerHTML='<span class="roster-name">'+escapeHtml(p.name)+'</span><button class="roster-toggle '+(p.enabled?'enabled':'')+'" aria-label="'+(p.enabled?'Avaktivera ':'Aktivera ')+escapeHtml(p.name)+'" aria-pressed="'+(p.enabled?'true':'false')+'"></button>';row.querySelector('button').onclick=()=>togglePlayerEnabled(p.id);$('manageList').appendChild(row)});
-      $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;$('outfieldValue').textContent=state.outfieldCount;
+      $('minutesValue').textContent=state.halfMinutes;$('halvesValue').textContent=state.totalHalves;$('outfieldValue').textContent=state.outfieldCount;$('useLastLineup').disabled=!history.length;
       renderHistory();
     }
 
-    function recordHomeGoal(scorerId=null){const p=state.players.find(x=>x.id===scorerId);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.homeScore++;state.goals.push({id:uid(),team:'home',half:state.half,timeMs:liveElapsed(),scorerId:scorerId||null,scorer:p?.name||null,onFieldIds});save();$('scorerDialog').close();render()}
-    function recordAwayGoal(){state.awayScore++;const gk=state.players.find(p=>p.id===state.goalkeeperId&&p.onField);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.goals.push({id:uid(),team:'away',half:state.half,timeMs:liveElapsed(),scorerId:null,scorer:null,goalkeeperId:gk?.id||null,goalkeeper:gk?.name||null,onFieldIds});save();render()}
+    function recordHomeGoal(scorerId=null){pushUndo('mål');const p=state.players.find(x=>x.id===scorerId);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.homeScore++;state.goals.push({id:uid(),team:'home',half:state.half,timeMs:liveElapsed(),scorerId:scorerId||null,scorer:p?.name||null,onFieldIds});logEvent('Mål Vaksala'+(p?' · '+p.name:''),'goal');save();$('scorerDialog').close();render()}
+    function recordAwayGoal(){pushUndo('motståndarmål');state.awayScore++;const gk=state.players.find(p=>p.id===state.goalkeeperId&&p.onField);const onFieldIds=state.players.filter(x=>x.enabled&&x.onField).map(x=>x.id);state.goals.push({id:uid(),team:'away',half:state.half,timeMs:liveElapsed(),scorerId:null,scorer:null,goalkeeperId:gk?.id||null,goalkeeper:gk?.name||null,onFieldIds});logEvent('Mål '+(state.opponent||'motståndare'),'goal-against');save();render()}
     function removeLatestGoal(team){
       const index=state.goals.map(g=>g.team).lastIndexOf(team);
       if(index<0)return;
+      pushUndo('ta bort mål');
       state.goals.splice(index,1);
       if(team==='home')state.homeScore=Math.max(0,state.homeScore-1);
       else state.awayScore=Math.max(0,state.awayScore-1);
+      logEvent('Senaste '+(team==='home'?'Vaksala-målet':'motståndarmålet')+' borttaget','edit');
       save();render();
     }
     function openGoalkeeperPicker(){
@@ -424,7 +512,7 @@
         return a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'});
       });
       if(!players.length){list.innerHTML='<div style="color:var(--muted);font-size:12px">Inga spelare tillagda.</div>'}
-      players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.innerHTML='<span>'+escapeHtml(p.name)+'</span> · <span class="'+(p.onField?'status-on':'status-bench')+'">'+(p.onField?'På plan':'På bänk')+'</span>';b.onclick=()=>{settle();state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
+      players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.innerHTML='<span>'+escapeHtml(p.name)+'</span> · <span class="'+(p.onField?'status-on':'status-bench')+'">'+(p.onField?'På plan':'På bänk')+'</span>';b.onclick=()=>{pushUndo('målvaktsbyte');const old=state.players.find(x=>x.id===state.goalkeeperId);if(old&&old.id!==p.id){old.onField=false;old.stintMs=0}state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}logEvent('MV: '+p.name+(old&&old.id!==p.id?' ersätter '+old.name:''),'goalkeeper');selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
       $('goalkeeperPickerDialog').showModal();
     }
 
@@ -440,7 +528,7 @@
     function startNewMatchWithOpponent(name){const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};selectedSwapId=null;save();render()}
     function openOpponentDialog(){const d=$('opponentDialog');$('opponentInput').value='';d.showModal();setTimeout(()=>$('opponentInput').focus(),50)}
 
-    function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount,goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalkeeperMs:Number(p.goalkeeperMs)||0,goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
+    function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount,totalMatchMs:totalElapsed(),lineup:{enabledNames:state.players.filter(p=>p.enabled).map(p=>p.name),onFieldNames:state.players.filter(p=>p.enabled&&p.onField).map(p=>p.name),goalkeeperName:state.players.find(p=>p.id===state.goalkeeperId)?.name||null},goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalkeeperMs:Number(p.goalkeeperMs)||0,goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
     function totalPlay(p){return Object.values(p.halfStats||{}).reduce((s,h)=>s+(h.playMs||0),0)}
     function totalBench(p){return Object.values(p.halfStats||{}).reduce((s,h)=>s+(h.benchMs||0),0)}
     function playerGoalStats(p,goals=[]){
@@ -451,7 +539,12 @@
         onAgainst:goals.filter(g=>g.team==='away'&&Array.isArray(g.onFieldIds)&&g.onFieldIds.includes(p.id)).length
       };
     }
-    function buildStatsTables(players,goals,totalHalves,prefix='stats'){
+    function playingTimeSpread(players){
+      const vals=players.map(totalPlay).filter(v=>Number.isFinite(v));
+      if(vals.length<2)return 0;
+      return Math.max(...vals)-Math.min(...vals);
+    }
+        function buildStatsTables(players,goals,totalHalves,prefix='stats'){
       const safePrefix=prefix.replace(/[^a-zA-Z0-9_-]/g,'');
       const wasGoalkeeper=p=>(Number(p.goalkeeperMs)||0)>0||goals.some(g=>g.team==='away'&&g.goalkeeperId===p.id);
 
@@ -524,7 +617,8 @@
         return '<div class="stats-row"><div class="stats-player">'+escapeHtml(p.name)+'</div><div class="stats-primary">'+fmt(Number(p.goalkeeperMs)||0)+'</div><div class="stats-secondary"><span>Mål insläppta '+s.conceded+'</span></div></div>';
       },wasGoalkeeper);
 
-      return plan+bench+onFor+onAgainst+goalkeeper;
+      const spread='<div class="stats-spread"><span>Skillnad mest/minst speltid</span><strong>'+fmt(playingTimeSpread(players))+'</strong></div>';
+      return spread+plan+bench+onFor+onAgainst+goalkeeper;
     }
     function renderHistory(){
       const box=$('historyContent');
@@ -538,7 +632,8 @@
         const players=m.players.slice().sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
         const stats=buildStatsTables(players,m.goals||[],maxHalf,'hist-'+m.id);
         const goals=(m.goals||[]).map(g=>'<div class="goal-item"><span>'+(g.team==='home'?escapeHtml(g.scorer||TEAM):escapeHtml(m.opponent||'Motståndare'))+'</span><span>H'+g.half+' · '+fmt(g.timeMs)+'</span></div>').join('')||'<div style="color:var(--muted);font-size:11px">Inga mål registrerade.</div>';
-        d.innerHTML='<summary><div class="hist-top"><span class="hist-name">'+escapeHtml(m.name)+'</span><span class="hist-score">'+m.homeScore+'–'+m.awayScore+'</span></div><div class="hist-date">'+date+'</div></summary><div class="hist-body">'+stats+'<div class="hist-subtitle">Målhändelser</div>'+goals+'</div>';
+        const totalMeta=m.totalMatchMs?'<span>Total '+fmt(m.totalMatchMs)+'</span>':'';
+        d.innerHTML='<summary><div class="hist-top"><span class="hist-name">'+escapeHtml(m.name)+'</span><span class="hist-score">'+m.homeScore+'–'+m.awayScore+'</span></div><div class="hist-meta-row"><span>'+date+'</span>'+totalMeta+'<span>'+(m.totalHalves||1)+' perioder</span></div></summary><div class="hist-body">'+stats+'<div class="hist-subtitle">Målhändelser</div>'+goals+'</div>';
         list.appendChild(d);
       });
     }
@@ -546,6 +641,22 @@
     function openSheet(id){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});const s=$(id);s.classList.add('open');s.setAttribute('aria-hidden','false');$('settingsTab').classList.toggle('active',id==='settingsSheet');$('historyTab').classList.toggle('active',id==='historySheet')}
     function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))}
 
+    $('undoBtn').onclick=undoLastAction;
+    $('activateAllPlayers').onclick=()=>{pushUndo('aktivera alla');state.players.forEach(p=>{p.enabled=true;ensureHalfStat(p)});logEvent('Alla spelare aktiverades','roster');save();render()};
+    $('deactivateAllPlayers').onclick=()=>{pushUndo('avaktivera alla');state.players.forEach(p=>{p.enabled=false;p.onField=false;p.stintMs=0});state.goalkeeperId=null;selectedSwapId=null;logEvent('Alla spelare avaktiverades','roster');save();render()};
+    $('useLastLineup').onclick=()=>{
+      const last=history[0];
+      if(!last)return;
+      pushUndo('senaste laguppställning');
+      const enabledNames=new Set(last.lineup?.enabledNames||last.players?.map(p=>p.name)||[]);
+      const onFieldNames=new Set(last.lineup?.onFieldNames||[]);
+      state.players.forEach(p=>{p.enabled=enabledNames.has(p.name);p.onField=p.enabled&&onFieldNames.has(p.name);p.stintMs=0});
+      const gkName=last.lineup?.goalkeeperName||null;
+      state.goalkeeperId=state.players.find(p=>p.name===gkName&&p.enabled)?.id||null;
+      logEvent('Senaste laguppställningen laddades','roster');save();render();
+    };
+    $('periodConfirmCancel').onclick=()=>{pendingHalf=null;$('periodConfirmDialog').close()};
+    $('periodConfirmOk').onclick=()=>{const h=pendingHalf;pendingHalf=null;$('periodConfirmDialog').close();if(h)applyHalfChange(h)};
     $('startPauseBtn').onclick=()=>{if(state.running){settle();state.running=false;state.startedAt=null}else{state.running=true;state.startedAt=Date.now()}save();render()};
     $('finishNowBtn').onclick=()=>{settle();state.running=false;state.startedAt=null;save();render();renderFinishStats();$('finishMatchDialog').showModal()};
     $('homeGoalBtn').onclick=openScorerDialog;$('awayGoalBtn').onclick=recordAwayGoal;$('homeRemoveGoalBtn').onclick=()=>removeLatestGoal('home');$('awayRemoveGoalBtn').onclick=()=>removeLatestGoal('away');$('cancelGoal').onclick=()=>$('scorerDialog').close();$('noScorerGoal').onclick=()=>recordHomeGoal(null);
@@ -559,9 +670,22 @@
       state.outfieldCount=next;save();render();
     };
     $('outfieldPlus').onclick=()=>{state.outfieldCount=Math.min(8,state.outfieldCount+1);save();render()};
-    function setCurrentHalf(nextHalf){settle();state.running=false;state.startedAt=null;state.half=Math.max(1,Math.min(state.totalHalves,nextHalf));state.halfElapsed=state.halfElapsed||{};if(state.halfElapsed[state.half]==null)state.halfElapsed[state.half]=0;state.elapsedMs=state.halfElapsed[state.half];state.players.forEach(p=>p.stintMs=0);save();render()}
+    function applyHalfChange(nextHalf){
+      pushUndo('periodbyte');
+      state.running=false;state.startedAt=null;state.half=Math.max(1,Math.min(state.totalHalves,nextHalf));state.halfElapsed=state.halfElapsed||{};if(state.halfElapsed[state.half]==null)state.halfElapsed[state.half]=0;state.elapsedMs=state.halfElapsed[state.half];state.players.forEach(p=>p.stintMs=0);logEvent('Bytte till '+periodLabel(state.half),'period');save();render()
+    }
+    function setCurrentHalf(nextHalf){
+      if(nextHalf===state.half)return;
+      if(state.running){
+        pendingHalf=nextHalf;
+        $('periodConfirmText').textContent='Klockan går. Byta till '+periodLabel(nextHalf)+' och pausa tidtagningen?';
+        $('periodConfirmDialog').showModal();
+        return;
+      }
+      applyHalfChange(nextHalf);
+    }
     function adjustCurrentTime(delta){
-      settle();
+      pushUndo('tidsjustering');
       state.halfElapsed=state.halfElapsed||{};
       const before=Number(state.halfElapsed[state.half])||0;
       const after=Math.max(0,before+delta);
@@ -578,6 +702,7 @@
           p.stintMs=Math.max(0,(p.stintMs||0)+applied);
         });
       }
+      logEvent((delta>0?'+':'')+(delta/1000)+' sek på matchklockan','time');
       save();render();
     }
     $('minusTen').onclick=()=>adjustCurrentTime(-10000);$('plusTen').onclick=()=>adjustCurrentTime(10000);
@@ -587,8 +712,15 @@
       state={...defaultState(),...settings,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();openOpponentDialog();
     }
-    function resetAllTime(){
-      settle();
+    function clearField(){
+      pushUndo('återställ spelare');
+      state.players.forEach(p=>{if(p.onField){p.onField=false;p.stintMs=0}});
+      state.goalkeeperId=null;selectedSwapId=null;pendingGoalkeeperSwap=null;goalkeeperSwipedOpen=false;
+      logEvent('Alla spelare flyttades till bänken','reset');
+      save();render();
+    }
+        function resetAllTime(){
+      pushUndo('återställ tid');
       state.running=false;
       state.startedAt=null;
       state.elapsedMs=0;
@@ -601,11 +733,12 @@
       });
       selectedSwapId=null;
       pendingGoalkeeperSwap=null;
+      logEvent('Alla tider återställdes','reset');
       save();
       render();
     }
     function resetCurrentMatch(){
-      settle();
+      pushUndo('återställ match');
       const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:p.enabled,onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
       const keep={opponent:state.opponent,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};
       state={...defaultState(),...keep,players:roster};
@@ -646,20 +779,25 @@
     $('opponentCancel').onclick=()=>{if(state.opponent)$('opponentDialog').close()};$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
     $('settingsTab').onclick=()=>openSheet('settingsSheet');$('historyTab').onclick=()=>openSheet('historySheet');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);document.querySelectorAll('.sheet').forEach(s=>s.onclick=e=>{if(e.target===s)closeSheets()});
 
+    const vibratedFiveMinute=new Set();
     const vibratedSevenMinute=new Set();
-    function checkSevenMinuteVibration(){
+    function checkTimeWarnings(){
       state.players.forEach(p=>{
         const key=p.id;
         const eligible=p.enabled&&p.id!==state.goalkeeperId;
         const ms=liveStint(p);
-        if(!eligible||ms<7*60000){vibratedSevenMinute.delete(key);return}
-        if(!vibratedSevenMinute.has(key)){
+        if(!eligible||ms<5*60000){vibratedFiveMinute.delete(key);vibratedSevenMinute.delete(key);return}
+        if(ms>=5*60000&&!vibratedFiveMinute.has(key)){
+          vibratedFiveMinute.add(key);
+          if(navigator.vibrate)navigator.vibrate(120);
+        }
+        if(ms>=7*60000&&!vibratedSevenMinute.has(key)){
           vibratedSevenMinute.add(key);
-          if(navigator.vibrate)navigator.vibrate(250);
+          if(navigator.vibrate)navigator.vibrate([180,100,260]);
         }
       });
     }
-    setInterval(()=>{if(state.running){checkSevenMinuteVibration();render()}},500);
+    setInterval(()=>{if(state.running){checkTimeWarnings();render()}},500);
     window.addEventListener('beforeunload',()=>{if(state.running)settle();save()});document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state.running)settle();save()}else if(state.running){state.startedAt=Date.now()}});
 
     render();
