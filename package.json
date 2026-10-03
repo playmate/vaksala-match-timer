@@ -1,6 +1,6 @@
 {
   "name": "vaksala-match-timer",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "private": true,
   "scripts": {
     "android:prepare": "mkdir -p www/assets && cp index.html www/index.html && cp assets/vaksala-icon.png www/assets/vaksala-icon.png && npx cap sync android",
