@@ -319,7 +319,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.60.6-preview';
+    const VERSION='1.60.7-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -342,6 +342,7 @@
     let selectedHistoryId=null;
     let transientStatsMatch=null;
     let pendingNewMatchEnabledNames=null;
+    let pendingNewMatchBackup=null;
     const $=id=>document.getElementById(id);
 
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
@@ -589,7 +590,7 @@
       fill('activeScorers',active,true);fill('benchScorers',bench,false);$('scorerDialog').showModal()
     }
 
-    function startNewMatchWithOpponent(name){const enabledNames=pendingNewMatchEnabledNames||new Set(state.players.filter(p=>p.enabled).map(p=>p.name));const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:enabledNames.has(p.name),onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};pendingNewMatchEnabledNames=null;selectedSwapId=null;save();render()}
+    function startNewMatchWithOpponent(name){const enabledNames=pendingNewMatchEnabledNames||new Set(state.players.filter(p=>p.enabled).map(p=>p.name));const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:enabledNames.has(p.name),onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};state={...defaultState(),...settings,players:roster,opponent:name.trim()||'Motståndare'};pendingNewMatchEnabledNames=null;pendingNewMatchBackup=null;selectedSwapId=null;save();render()}
     function openOpponentDialog(){const d=$('opponentDialog');$('opponentInput').value='';d.showModal();setTimeout(()=>$('opponentInput').focus(),50)}
 
     function snapshotMatch(name){settle();const includedPlayers=state.players.filter(p=>p.enabled||totalPlay(p)>0);const snap={id:uid(),name:name.trim()||`${TEAM} - ${state.opponent||'Motståndare'}`,savedAt:new Date().toISOString(),opponent:state.opponent,homeScore:state.homeScore,awayScore:state.awayScore,totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount,totalMatchMs:totalElapsed(),lineup:{enabledNames:state.players.filter(p=>p.enabled).map(p=>p.name),onFieldNames:state.players.filter(p=>p.enabled&&p.onField).map(p=>p.name),goalkeeperName:state.players.find(p=>p.id===state.goalkeeperId)?.name||null},resumeState:structuredClone({...state,running:false,startedAt:null}),goals:structuredClone(state.goals),players:includedPlayers.map(p=>({id:p.id,name:p.name,halfStats:structuredClone(p.halfStats),goalkeeperMs:Number(p.goalkeeperMs)||0,goalsConceded:(state.goals||[]).filter(g=>g.team==='away'&&g.goalkeeperId===p.id).length}))};history.unshift(snap);save();render();return snap}
@@ -901,6 +902,7 @@
     }
     $('minusTen').onclick=()=>adjustCurrentTime(-10000);$('plusTen').onclick=()=>adjustCurrentTime(10000);
     function prepareNewMatch(){
+      pendingNewMatchBackup=structuredClone(state);
       pendingNewMatchEnabledNames=new Set(state.players.filter(p=>p.enabled).map(p=>p.name));
       const roster=state.players.map(p=>({id:p.id,name:p.name,enabled:pendingNewMatchEnabledNames.has(p.name),onField:false,stintMs:0,goalkeeperMs:0,halfStats:{}}));
       const settings={totalHalves:state.totalHalves,halfMinutes:state.halfMinutes,outfieldCount:state.outfieldCount};
@@ -1006,7 +1008,16 @@
     $('saveMatchName').onkeydown=e=>{if(e.key==='Enter')$('saveMatchConfirm').click()};
     $('cancelGoalkeeperSwap').onclick=()=>{pendingGoalkeeperSwap=null;$('confirmGoalkeeperSwap').close()};
     $('confirmGoalkeeperSwapBtn').onclick=()=>{if(!pendingGoalkeeperSwap)return;$('confirmGoalkeeperSwap').close();const selected=state.players.find(x=>x.id===pendingGoalkeeperSwap.selectedId),target=state.players.find(x=>x.id===pendingGoalkeeperSwap.targetId);if(selected&&target)performSwap(selected,target)};
-    $('opponentCancel').onclick=()=>{if(state.opponent)$('opponentDialog').close()};$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
+    $('opponentCancel').onclick=()=>{
+      $('opponentDialog').close();
+      if(pendingNewMatchBackup){
+        state=structuredClone(pendingNewMatchBackup);
+        pendingNewMatchBackup=null;
+        pendingNewMatchEnabledNames=null;
+        save();
+        render();
+      }
+    };$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
     $('settingsTab').onclick=()=>openSheet('settingsSheet');$('historyTab').onclick=()=>openSheet('historySheet');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);document.querySelectorAll('.sheet').forEach(s=>s.onclick=e=>{if(e.target===s)closeSheets()});
 
     const vibratedFiveMinute=new Set();
