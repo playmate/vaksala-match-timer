@@ -93,7 +93,7 @@
       <div class="match-total" id="matchTotal">Total matchtid 00:00</div>
       <div class="match-line"></div>
       <div class="clock-wrap" id="clockWrap">
-        <div class="half-pill" id="halfLabel">Halvlek 1 / 2</div>
+        <div class="half-pill" id="halfLabel">Första halvlek</div>
         <div class="clock-row">
           <button class="clock-adjust" id="minusTen" aria-label="Dra av 10 sekunder">−10 sek</button>
           <div class="clock" id="clock">00:00</div>
@@ -209,7 +209,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.13.8';
+    const VERSION='1.13.9';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -315,7 +315,8 @@
     function render(){
       $('settingsVersion').textContent=`Vaksala SK Match · version ${VERSION}`;
       $('opponentName').textContent=state.opponent||'Motståndare';$('homeScore').textContent=state.homeScore;$('awayScore').textContent=state.awayScore;$('homeRemoveGoalBtn').disabled=state.homeScore<=0;$('awayRemoveGoalBtn').disabled=state.awayScore<=0;$('matchTotal').textContent='Total matchtid '+fmt(totalElapsed());
-      $('halfLabel').textContent=`Halvlek ${state.half} / ${state.totalHalves}`;
+      const periodNames=['','Första','Andra','Tredje','Fjärde','Femte','Sjätte','Sjunde','Åttonde','Nionde','Tionde'];
+      $('halfLabel').textContent=state.half===1?'Första halvlek':state.half===2?'Andra halvlek':`${periodNames[state.half]||state.half+':e'} perioden`;
       const elapsed=liveElapsed();
       const regulation=state.halfMinutes*60000;
       const over=elapsed>regulation;
