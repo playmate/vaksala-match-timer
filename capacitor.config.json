@@ -1,0 +1,6 @@
+{
+  "appId": "se.vaksalask.matchtimer",
+  "appName": "Vaksala SK Match",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
