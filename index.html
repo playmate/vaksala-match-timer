@@ -182,7 +182,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.6.1';
+    const VERSION='1.6.2';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -246,12 +246,6 @@
       selectedSwapId=null;pendingGoalkeeperSwap=null;save();render();
     }
     function chooseForSwap(p){
-      if(!p.onField&&!selectedSwapId){
-        const activeOutfield=state.players.filter(x=>x.onField&&x.id!==state.goalkeeperId).length;
-        if(activeOutfield<4){
-          settle();p.onField=true;p.stintMs=0;save();render();return;
-        }
-      }
       if(selectedSwapId===p.id){selectedSwapId=null;render();return}
       const selected=state.players.find(x=>x.id===selectedSwapId);
       if(!selected){selectedSwapId=p.id;render();return}
