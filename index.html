@@ -93,7 +93,7 @@
     <img src="assets/vaksala-icon.png" alt="" />
   </div>
   <div class="finish-transition" id="finishTransition" aria-hidden="true">
-    <img src="assets/vaksala-icon.png" alt="" />
+    <img src="assets/vaksala-finish-logo.png" alt="" />
   </div>
   <main class="app">
     <section class="hero">
@@ -907,7 +907,7 @@
       const scorerText=Object.entries(scorerCounts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'sv-SE')).map(([n,v])=>escapeHtml(n)+(v>1?' ×'+v:'')).join(', ')||'Inga registrerade målskyttar';
       $('finishStats').innerHTML=
         '<div class="finish-summary">'+
-          '<div class="finish-summary-logo"><img src="assets/vaksala-icon.png" alt=""></div>'+
+          '<div class="finish-summary-logo"><img src="assets/vaksala-finish-logo.png" alt=""></div>'+
           '<div class="finish-summary-title">Matchen är slut</div>'+
           '<div class="finish-summary-teams">'+
             '<div class="finish-team"><div class="finish-team-name">Vaksala</div><div class="finish-score">'+state.homeScore+'</div></div>'+
