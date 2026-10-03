@@ -206,6 +206,16 @@
     </div>
   </div></dialog>
 
+  <dialog id="saveMatchDialog"><div class="modal">
+    <h2>Spara match</h2>
+    <p>Matchnamnet är förifyllt men kan ändras.</p>
+    <input class="input" id="saveMatchName" maxlength="80" autocomplete="off" />
+    <div class="modal-actions">
+      <button class="secondary" id="saveMatchCancel">Avbryt</button>
+      <button class="primary" id="saveMatchConfirm">Spara</button>
+    </div>
+  </div></dialog>
+
   <dialog id="goalkeeperPickerDialog"><div class="modal">
     <h2>Välj målvakt</h2><p>Välj en spelare. Spelaren flyttas in på plan om den står på bänken.</p>
     <div class="scorer-list" id="goalkeeperPickerList"></div>
@@ -213,7 +223,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.14.6';
+    const VERSION='1.14.7';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -616,7 +626,21 @@
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
     $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
     $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();openOpponentDialog()};
-    $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();openOpponentDialog()};
+    $('finishSave').onclick=()=>{
+      $('saveMatchName').value='Vaksala - '+(state.opponent||'Motståndare');
+      $('saveMatchDialog').showModal();
+      setTimeout(()=>$('saveMatchName').select(),50);
+    };
+    $('saveMatchCancel').onclick=()=>$('saveMatchDialog').close();
+    $('saveMatchConfirm').onclick=()=>{
+      const name=$('saveMatchName').value.trim()||('Vaksala - '+(state.opponent||'Motståndare'));
+      snapshotMatch(name);
+      save();
+      $('saveMatchDialog').close();
+      $('finishMatchDialog').close();
+      openOpponentDialog();
+    };
+    $('saveMatchName').onkeydown=e=>{if(e.key==='Enter')$('saveMatchConfirm').click()};
     $('cancelGoalkeeperSwap').onclick=()=>{pendingGoalkeeperSwap=null;$('confirmGoalkeeperSwap').close()};
     $('confirmGoalkeeperSwapBtn').onclick=()=>{if(!pendingGoalkeeperSwap)return;$('confirmGoalkeeperSwap').close();const selected=state.players.find(x=>x.id===pendingGoalkeeperSwap.selectedId),target=state.players.find(x=>x.id===pendingGoalkeeperSwap.targetId);if(selected&&target)performSwap(selected,target)};
     $('opponentCancel').onclick=()=>{if(state.opponent)$('opponentDialog').close()};$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
