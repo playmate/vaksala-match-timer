@@ -19,6 +19,7 @@
     @keyframes launchLogo{0%{opacity:0;transform:scale(.80)}22%{opacity:1;transform:scale(.98)}58%{opacity:1;transform:scale(1.04)}100%{opacity:0;transform:scale(1.18)}}
     @media(prefers-reduced-motion:reduce){.launch-splash img{animation:launchLogoReduced .6s ease forwards}@keyframes launchLogoReduced{0%{opacity:0}35%{opacity:1}100%{opacity:0}}}
     html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .pin-lock{position:fixed;inset:0;z-index:9998;background:#070b10;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .22s ease,visibility .22s ease}.pin-lock.unlocked{opacity:0;visibility:hidden;pointer-events:none}.pin-card{width:min(360px,100%);text-align:center}.pin-title{font-size:24px;font-weight:950}.pin-sub{margin-top:7px;color:var(--muted);font-size:12px;font-weight:750}.pin-slots{display:grid;grid-template-columns:repeat(4,58px);justify-content:center;gap:12px;margin:28px 0 20px}.pin-slot{width:58px;height:58px;border:1px solid #2b3c4b;border-radius:16px;background:#101923;display:flex;align-items:center;justify-content:center;overflow:hidden}.pin-slot::after{content:'';width:10px;height:10px;border-radius:50%;background:#334452}.pin-slot.filled{border-color:rgba(240,180,86,.55);background:#151b20}.pin-slot.filled::after{display:none}.pin-slot img{width:42px;height:42px;object-fit:contain}.pin-hidden-input{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}.pin-tap{border:1px solid #314354;background:#182531;color:#dce7f0;border-radius:13px;padding:11px 16px;font-weight:900}.pin-error{min-height:18px;margin-top:12px;color:#ef8a8a;font-size:11px;font-weight:850}.pin-card.shake{animation:pinShake .32s ease}@keyframes pinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
     button,input,select{font:inherit} button{cursor:pointer}
     .app{width:min(980px,100%);margin:auto;padding:8px 10px calc(86px + env(safe-area-inset-bottom))}
     .topbar{display:flex;align-items:center;justify-content:center;margin:2px 2px 12px;gap:12px}
@@ -91,6 +92,19 @@
 <body>
   <div class="launch-splash" id="launchSplash" aria-hidden="true">
     <img src="assets/vaksala-icon.png" alt="" />
+  </div>
+
+  <div class="pin-lock" id="pinLock">
+    <div class="pin-card" id="pinCard">
+      <div class="pin-title">Ange PIN-kod</div>
+      <div class="pin-sub">4 siffror</div>
+      <div class="pin-slots" id="pinSlots">
+        <div class="pin-slot"></div><div class="pin-slot"></div><div class="pin-slot"></div><div class="pin-slot"></div>
+      </div>
+      <input class="pin-hidden-input" id="pinInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="PIN-kod">
+      <button class="pin-tap" id="pinTap">Ange kod</button>
+      <div class="pin-error" id="pinError"></div>
+    </div>
   </div>
   <div class="finish-transition" id="finishTransition" aria-hidden="true">
     <img src="assets/vaksala-finish-logo.png" alt="" />
@@ -307,10 +321,11 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.60.2-preview';
+    const VERSION='1.60.3-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
+    const PIN_HASH='5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa';
     const TEAM_ROSTER=['Nåd','Antony','Augustus','Endrit','Erik','Liam','John','Rahand','Lwi','Frans','Charles','Salah','Finn','Ryan','Ian','Karam','Jarvis','Advaith','Josef','Raphael','Even'];
 
     const defaultState=()=>({
@@ -1019,6 +1034,64 @@
     }
     setInterval(()=>{if(state.running){checkTimeWarnings();render()}},500);
     window.addEventListener('beforeunload',()=>{if(state.running)settle();save()});document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state.running)settle();save()}else if(state.running){state.startedAt=Date.now()}});
+
+    async function sha256Hex(value){
+      const data=new TextEncoder().encode(value);
+      const digest=await crypto.subtle.digest('SHA-256',data);
+      return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+    function renderPinSlots(){
+      const value=$('pinInput').value;
+      $('pinSlots').querySelectorAll('.pin-slot').forEach((slot,i)=>{
+        slot.classList.toggle('filled',i<value.length);
+        slot.innerHTML=i<value.length?'<img src="assets/pwpin.png" alt="">':'';
+      });
+    }
+    async function verifyPin(){
+      const input=$('pinInput');
+      if(input.value.length!==4)return;
+      const entered=input.value;
+      input.disabled=true;
+      try{
+        const ok=(await sha256Hex(entered))===PIN_HASH;
+        if(ok){
+          $('pinError').textContent='';
+          $('pinLock').classList.add('unlocked');
+          setTimeout(()=>$('pinLock')?.remove(),240);
+        }else{
+          $('pinError').textContent='Fel PIN-kod';
+          $('pinCard').classList.remove('shake');
+          void $('pinCard').offsetWidth;
+          $('pinCard').classList.add('shake');
+          input.value='';
+          renderPinSlots();
+        }
+      }finally{
+        if(document.body.contains(input)){
+          input.disabled=false;
+          input.focus({preventScroll:true});
+        }
+      }
+    }
+    $('pinTap').onclick=()=>$('pinInput').focus({preventScroll:true});
+    $('pinLock').onclick=e=>{if(e.target===$('pinLock')||e.target===$('pinSlots'))$('pinInput').focus({preventScroll:true})};
+    $('pinInput').addEventListener('input',e=>{
+      e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);
+      $('pinError').textContent='';
+      renderPinSlots();
+      if(e.target.value.length===4)verifyPin();
+    });
+    document.addEventListener('keydown',e=>{
+      if(!$('pinLock')||$('pinLock').classList.contains('unlocked'))return;
+      if(/^\d$/.test(e.key)){
+        const input=$('pinInput');
+        if(input.value.length<4){input.value+=e.key;input.dispatchEvent(new Event('input',{bubbles:true}))}
+        e.preventDefault();
+      }else if(e.key==='Backspace'){
+        const input=$('pinInput');input.value=input.value.slice(0,-1);renderPinSlots();e.preventDefault();
+      }
+    });
+    setTimeout(()=>$('pinInput')?.focus({preventScroll:true}),1900);
 
     render();
     const launchSplash=$('launchSplash');
