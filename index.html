@@ -235,6 +235,15 @@
     </div>
   </div></dialog>
 
+  <dialog id="discardMatchDialog"><div class="modal">
+    <h2>Släng matchen?</h2>
+    <p>Matchen och all osparad statistik försvinner.</p>
+    <div class="modal-actions">
+      <button class="secondary" id="discardMatchCancel">Avbryt</button>
+      <button class="danger" id="discardMatchConfirm">Ja, släng</button>
+    </div>
+  </div></dialog>
+
   <dialog id="saveMatchDialog"><div class="modal">
     <h2>Spara match</h2>
     <p>Matchnamnet är förifyllt men kan ändras.</p>
@@ -288,7 +297,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.15.5-preview';
+    const VERSION='1.15.6-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -913,7 +922,9 @@
     }
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
     $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
-    $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();prepareNewMatch()};
+    $('finishIgnore').onclick=()=>{$('discardMatchDialog').showModal()};
+    $('discardMatchCancel').onclick=()=>$('discardMatchDialog').close();
+    $('discardMatchConfirm').onclick=()=>{$('discardMatchDialog').close();$('finishMatchDialog').close();prepareNewMatch()};
     $('finishSave').onclick=()=>{
       $('saveMatchName').value='Vaksala - '+(state.opponent||'Motståndare');
       $('saveMatchDialog').showModal();
