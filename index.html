@@ -37,9 +37,9 @@
 
     .section{margin-top:18px}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 2px 9px}.section-title{font-size:18px;font-weight:900}.section-meta{color:var(--muted);font-size:11px;font-weight:750;text-align:right}
     .goalkeeper-slot{margin-bottom:10px}.gk-card{width:100%;border:1px solid rgba(103,183,255,.45);background:linear-gradient(180deg,#172b3b,#132331);color:var(--text);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;text-align:left}.gk-badge{background:#174b72;border:1px solid #2d6f9f;color:#d8efff;border-radius:9px;padding:6px 7px;font-size:10px;font-weight:950}.gk-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gk-time{font-variant-numeric:tabular-nums;font-weight:950;font-size:18px}.gk-sub{grid-column:2/4;color:#7391a8;font-size:10px;font-weight:750;margin-top:-5px}
-    .players.field{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.players.bench{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .players.field{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.players.bench{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
     .player{position:relative;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:17px;padding:11px 10px;min-width:0;color:var(--text);transition:.12s transform}.player:active{transform:scale(.98)}.player.active{border-color:rgba(83,213,139,.36);background:linear-gradient(180deg,#172a24,#13221e)}.player.bench{border-color:rgba(240,180,86,.22)}.player.selected,.gk-card.selected{outline:3px solid #63b3ff;outline-offset:2px}.player.time-warn,.gk-card.time-warn{border-color:#f0b456!important;background:linear-gradient(180deg,#332818,#241e15)!important}.player.time-danger,.gk-card.time-danger{border-color:#ff6565!important;background:linear-gradient(180deg,#351b1f,#27161a)!important}
-    .player-name{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}.stint{margin-top:9px;font-size:20px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.stint-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.half-total{margin-top:6px;color:#667583;font-size:9px;font-weight:750;font-variant-numeric:tabular-nums}.empty{grid-column:1/-1;color:var(--muted);border:1px dashed var(--line);border-radius:16px;padding:18px;text-align:center;font-size:13px}
+    .player-name{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.state-dot{position:absolute;right:9px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}.active .state-dot{background:var(--green)}.stint{margin-top:9px;font-size:20px;font-weight:950;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.stint-label{margin-top:4px;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.half-total{margin-top:6px;color:#667583;font-size:9px;font-weight:750;font-variant-numeric:tabular-nums}.empty{grid-column:1/-1;color:var(--muted);border:1px dashed var(--line);border-radius:16px;padding:18px;text-align:center;font-size:13px}
 
     details.manage{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}details.manage summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 4px;color:var(--muted);font-weight:850;cursor:pointer;font-size:13px}details.manage summary::-webkit-details-marker{display:none}.manage-body{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:13px}.add-row{display:flex;gap:8px}.input{width:100%;background:#0d151e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px 13px;outline:none}.add-row button{border:none;border-radius:13px;background:#243749;color:white;padding:0 14px;font-weight:850}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.chip{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#0f1821;border-radius:999px;padding:7px 8px 7px 11px;font-size:12px;font-weight:800}.chip button{width:22px;height:22px;border:none;border-radius:50%;background:#2d1b1e;color:#ffb5b5;padding:0}
 
@@ -51,7 +51,7 @@
 
     dialog{border:none;border-radius:24px;background:#111b25;color:var(--text);padding:0;width:min(430px,calc(100% - 24px));box-shadow:0 30px 90px rgba(0,0,0,.58)}dialog::backdrop{background:rgba(0,0,0,.68)}.modal{padding:18px}.modal h2{margin:0 0 7px;font-size:21px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.modal-actions button{border:none;border-radius:13px;padding:12px;font-weight:900}.scorer-groups{display:grid;gap:12px;margin-top:12px}.scorer-title{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.scorer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.scorer-btn{border:1px solid var(--line);background:#172431;color:white;border-radius:12px;padding:10px;text-align:left;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scorer-btn.active{border-color:rgba(83,213,139,.4);background:#173025}.scorer-btn.no-scorer{grid-column:1/-1;text-align:center;color:#aab7c3}
 
-    @media(max-width:560px){.players.field{gap:5px}.player{padding:9px 7px}.player-name{font-size:12px}.stint{font-size:17px}.stint-label{font-size:7px}.half-total{font-size:8px}.settings-grid{grid-template-columns:1fr}.setting.full{grid-column:auto}}
+    @media(max-width:560px){.players.field,.players.bench{gap:5px}.player{padding:9px 7px}.player-name{font-size:16px}.stint{font-size:17px}.stint-label{font-size:7px}.half-total{font-size:8px}.settings-grid{grid-template-columns:1fr}.setting.full{grid-column:auto}}
     @media(min-width:720px){.app{padding-top:22px}.hero{padding:22px}.players.bench{grid-template-columns:repeat(4,minmax(0,1fr))}}
   </style>
 </head>
@@ -183,7 +183,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.4.2';
+    const VERSION='1.4.3';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -260,7 +260,7 @@
     }
 
     function playerCard(p){const b=document.createElement('button');b.className=`player ${p.onField?'active':'bench'} ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;const half=p.onField?liveStat(p,'playMs'):liveStat(p,'benchMs');b.innerHTML=`<div class="player-name">${escapeHtml(p.name)}</div><span class="state-dot"></span><div class="stint">${fmt(liveStint(p))}</div><div class="stint-label">${p.onField?'Nuvarande bytestid':'Nuvarande bänktid'}</div><div class="half-total">Halvlek: ${fmt(half)}</div>`;b.onclick=()=>chooseForSwap(p);return b}
-    function goalkeeperCard(p){const b=document.createElement('button');b.className=`gk-card ${selectedSwapId===p.id?'selected':''} ${timeClass(p)}`;b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">Halvlek: ${fmt(liveStat(p,'playMs'))} · tryck för att markera för byte</span>`;b.onclick=()=>chooseForSwap(p);return b}
+    function goalkeeperCard(p){const b=document.createElement('button');b.className=`gk-card ${selectedSwapId===p.id?'selected':''}`;b.innerHTML=`<span class="gk-badge">MV</span><span class="gk-name">${escapeHtml(p.name)}</span><span class="gk-time">${fmt(liveStint(p))}</span><span class="gk-sub">Halvlek: ${fmt(liveStat(p,'playMs'))} · tryck för att markera för byte</span>`;b.onclick=()=>chooseForSwap(p);return b}
 
     function render(){
       $('settingsVersion').textContent=`Vaksala SK Match · version ${VERSION}`;
@@ -342,9 +342,9 @@
       state.elapsedMs=after;
       if(applied!==0){
         state.players.forEach(p=>{
-          if(!p.onField)return;
           const hs=ensureHalfStat(p,state.half);
-          hs.playMs=Math.max(0,(hs.playMs||0)+applied);
+          if(p.onField)hs.playMs=Math.max(0,(hs.playMs||0)+applied);
+          else hs.benchMs=Math.max(0,(hs.benchMs||0)+applied);
           p.stintMs=Math.max(0,(p.stintMs||0)+applied);
         });
       }
