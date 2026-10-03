@@ -335,7 +335,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.62.4-preview';
+    const VERSION='1.62.5-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -718,7 +718,10 @@
       };
     }
     function playingTimeSpread(players){
-      const vals=players.map(totalPlay).filter(v=>Number.isFinite(v));
+      const vals=players
+        .filter(p=>(Number(p.goalkeeperMs)||0)<=0)
+        .map(totalPlay)
+        .filter(v=>Number.isFinite(v));
       if(vals.length<2)return 0;
       return Math.max(...vals)-Math.min(...vals);
     }
@@ -886,8 +889,8 @@
     }
 
     function spreadMarkup(m){
-      const players=(m?.players||[]).filter(p=>Number.isFinite(totalPlay(p)));
-      if(!players.length)return '<div class="history-stat-empty">Ingen speltidsstatistik.</div>';
+      const players=(m?.players||[]).filter(p=>(Number(p.goalkeeperMs)||0)<=0&&Number.isFinite(totalPlay(p)));
+      if(!players.length)return '<div class="history-stat-empty">Ingen speltidsstatistik för utespelare.</div>';
       const plays=players.map(p=>({p,play:totalPlay(p)}));
       const max=Math.max(...plays.map(x=>x.play)),min=Math.min(...plays.map(x=>x.play));
       const highs=plays.filter(x=>x.play===max).sort((a,b)=>a.p.name.localeCompare(b.p.name,'sv-SE'));
