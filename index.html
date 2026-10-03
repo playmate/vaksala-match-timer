@@ -176,8 +176,14 @@
     </div>
   </div></dialog>
 
+  <dialog id="goalkeeperPickerDialog"><div class="modal">
+    <h2>Välj målvakt</h2><p>Välj en spelare. Spelaren flyttas in på plan om den står på bänken.</p>
+    <div class="scorer-list" id="goalkeeperPickerList"></div>
+    <div class="modal-actions"><button class="secondary" id="cancelGoalkeeperPicker">Avbryt</button></div>
+  </div></dialog>
+
   <script>
-    const VERSION='1.4.0';
+    const VERSION='1.4.1';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -266,7 +272,15 @@
       $('startPauseBtn').textContent=state.running?'Pausa':(state.elapsedMs>0?'Fortsätt':'Starta');$('halfBtn').textContent=state.half>=state.totalHalves?'Avsluta match':'Nästa halvlek';
       const sorted=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE',{sensitivity:'base'}));
       const gk=sorted.find(p=>p.id===state.goalkeeperId&&p.onField);const outfield=sorted.filter(p=>p.onField&&p.id!==state.goalkeeperId);const bench=sorted.filter(p=>!p.onField);
-      $('activeCount').textContent=outfield.length+' utespelare'+(gk?' + MV':'');$('goalkeeperSlot').innerHTML='';if(gk)$('goalkeeperSlot').appendChild(goalkeeperCard(gk));else $('goalkeeperSlot').innerHTML='<div class="empty">Ingen aktiv målvakt vald</div>';
+      $('activeCount').textContent=outfield.length+' utespelare'+(gk?' + MV':'');$('goalkeeperSlot').innerHTML='';
+      if(gk)$('goalkeeperSlot').appendChild(goalkeeperCard(gk));
+      else {
+        const emptyGk=document.createElement('button');
+        emptyGk.className='empty';
+        emptyGk.textContent='Ingen aktiv målvakt vald';
+        emptyGk.onclick=openGoalkeeperPicker;
+        $('goalkeeperSlot').appendChild(emptyGk);
+      }
       $('activePlayers').innerHTML='';$('benchPlayers').innerHTML='';
       if(!outfield.length){
         const empty=document.createElement('button');
@@ -284,6 +298,14 @@
 
     function recordHomeGoal(scorerId=null){const p=state.players.find(x=>x.id===scorerId);state.homeScore++;state.goals.push({id:uid(),team:'home',half:state.half,timeMs:liveElapsed(),scorerId:scorerId||null,scorer:p?.name||null});save();$('scorerDialog').close();render()}
     function recordAwayGoal(){state.awayScore++;state.goals.push({id:uid(),team:'away',half:state.half,timeMs:liveElapsed(),scorerId:null,scorer:null});save();render()}
+    function openGoalkeeperPicker(){
+      const list=$('goalkeeperPickerList');list.innerHTML='';
+      const players=[...state.players].sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
+      if(!players.length){list.innerHTML='<div style="color:var(--muted);font-size:12px">Inga spelare tillagda.</div>'}
+      players.forEach(p=>{const b=document.createElement('button');b.className='scorer-btn';b.textContent=p.name+(p.onField?' · På plan':' · Bänk');b.onclick=()=>{settle();state.goalkeeperId=p.id;if(!p.onField){p.onField=true;p.stintMs=0}selectedSwapId=null;save();$('goalkeeperPickerDialog').close();render()};list.appendChild(b)});
+      $('goalkeeperPickerDialog').showModal();
+    }
+
     function openScorerDialog(){
       const active=[...state.players].filter(p=>p.onField&&p.id!==state.goalkeeperId).sort((a,b)=>a.name.localeCompare(b.name,'sv-SE'));
       const gk=state.players.find(p=>p.onField&&p.id===state.goalkeeperId);
@@ -338,6 +360,7 @@
       $('finishStats').innerHTML='<div class="hist-top"><span class="hist-name">'+TEAM+' - '+escapeHtml(state.opponent||'Motståndare')+'</span><span class="hist-score">'+state.homeScore+'–'+state.awayScore+'</span></div><div class="hist-date">Total matchtid '+fmt(totalElapsed())+'</div><div class="hist-subtitle">Speltid per halvlek</div><div style="overflow:auto"><table class="stat-table"><thead><tr><th>Spelare</th>'+headers+'<th>Totalt</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="hist-subtitle">Mål</div>'+goals;
     }
     $('finishCancel').onclick=()=>$('finishMatchDialog').close();
+    $('cancelGoalkeeperPicker').onclick=()=>$('goalkeeperPickerDialog').close();
     $('finishIgnore').onclick=()=>{$('finishMatchDialog').close();prepareNewMatch()};
     $('finishSave').onclick=()=>{snapshotMatch(TEAM+' - '+(state.opponent||'Motståndare'));save();$('finishMatchDialog').close();prepareNewMatch()};
     $('cancelGoalkeeperSwap').onclick=()=>{pendingGoalkeeperSwap=null;$('confirmGoalkeeperSwap').close()};
