@@ -335,7 +335,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.61.6-preview';
+    const VERSION='1.61.7-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -618,7 +618,7 @@
       const gk=matchPlayers.find(p=>p.id===state.goalkeeperId&&p.onField);
       const outfield=matchPlayers.filter(p=>p.onField&&p.id!==state.goalkeeperId).sort(comparePlayersBySelectedTime);
       const bench=matchPlayers.filter(p=>!p.onField).sort(comparePlayersBySelectedTime);
-      const sortLabels=['Plats','Speltid','Bänktid'];
+      const sortLabels=['Nuvarande byte','Total speltid','Total bänktid'];
       const sortLabel=$('playerSortIndicator')?.querySelector('.player-sort-label');
       if(sortLabel)sortLabel.textContent=sortLabels[playerSortMode]||'Plats';
       const latest=(state.events||[]).at(-1);
