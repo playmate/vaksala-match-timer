@@ -358,7 +358,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.10-preview';
+    const VERSION='1.64.11-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -628,7 +628,7 @@
       const timeUp=elapsed>=regulation;
       const regulationMinutes=periodMinutes();
       const regulationLabel=Number.isInteger(regulationMinutes)?String(regulationMinutes):String(Math.round(regulationMinutes*10)/10);
-      $('clockStatus').textContent=timeUp?`Ordinarie tid slut · ${state.running?'klockan går':'pausad'}`:`${state.running?'Matchen pågår':'Matchen är pausad'} · ${regulationLabel}:00`;
+      $('clockStatus').textContent=state.running?'':`Pausad · ${regulationLabel}:00`;
       $('clockWrap').classList.toggle('running',state.running);
       $('clockWrap').classList.toggle('paused',!state.running);
       $('clockWrap').classList.toggle('time-up',timeUp);
