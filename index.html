@@ -87,7 +87,7 @@
     }
     @media(min-width:720px){.app{padding-top:22px}.hero{padding:22px}.players.bench{grid-template-columns:repeat(4,minmax(0,1fr))}}
   
-    .history-toolbar{display:flex;gap:8px;margin-bottom:12px}.history-select-toggle,.history-create-cup{flex:1;border:1px solid #34495c;background:#172633;color:#dce8f2;border-radius:13px;padding:11px 12px;font-weight:900}.history-select-toggle.active{background:#24405a;border-color:#67b7ff;color:#e8f5ff}.history-create-cup{background:#24583b;border-color:rgba(83,213,139,.55);color:#dcffe9}.history-create-cup:disabled{opacity:.35}.history-card.selecting{padding-left:42px;position:relative}.history-select-dot{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;border:2px solid #526779;background:#101923}.history-card.selected .history-select-dot{border-color:#67b7ff;background:#67b7ff;box-shadow:inset 0 0 0 4px #101923}.history-section-label{margin:4px 2px 8px;color:#8492a0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.cup-list{display:grid;gap:9px;margin-bottom:16px}.cup-card{border:1px solid rgba(103,183,255,.35);background:linear-gradient(180deg,#122334,#101b27);border-radius:17px;padding:13px 14px;cursor:pointer}.cup-card:active{transform:scale(.99)}.cup-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.cup-name{font-size:15px;font-weight:950}.cup-count{font-size:10px;color:#9acdf7;font-weight:900}.cup-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;color:#7f8e9c;font-size:9px;font-weight:800}.cup-delete{margin-top:9px;border:1px solid rgba(239,106,106,.35);background:#2b1c20;color:#e6aaaa;border-radius:10px;padding:7px 10px;font-size:10px;font-weight:900}.cup-name-error{min-height:18px;margin-top:7px;color:#ef8585;font-size:10px;font-weight:850}
+    .history-toolbar{display:flex;gap:8px;margin-bottom:12px}.history-select-toggle,.history-create-cup{flex:1;border:1px solid #34495c;background:#172633;color:#dce8f2;border-radius:13px;padding:11px 12px;font-weight:900}.history-select-toggle.active{background:#24405a;border-color:#67b7ff;color:#e8f5ff}.history-create-cup{background:#24583b;border-color:rgba(83,213,139,.55);color:#dcffe9}.history-create-cup:disabled{opacity:.35}.history-card.selecting{padding-left:42px;position:relative}.history-select-dot{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;border:2px solid #526779;background:#101923}.history-card.selected .history-select-dot{border-color:#67b7ff;background:#67b7ff;box-shadow:inset 0 0 0 4px #101923}.history-section-label{margin:4px 2px 8px;color:#8492a0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.cup-list{display:grid;gap:9px;margin-bottom:16px}.cup-card{border:1px solid rgba(103,183,255,.35);background:linear-gradient(180deg,#122334,#101b27);border-radius:17px;padding:13px 14px;cursor:pointer}.cup-card:active{transform:scale(.99)}.cup-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.cup-name{font-size:15px;font-weight:950}.cup-count{font-size:10px;color:#9acdf7;font-weight:900}.cup-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;color:#7f8e9c;font-size:9px;font-weight:800}.cup-result-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0 0}.cup-result-item{background:#0d151e;border:1px solid var(--line);border-radius:12px;padding:9px 6px;text-align:center}.cup-result-item strong{display:block;font-size:18px;font-weight:950}.cup-result-item span{display:block;margin-top:3px;color:var(--muted);font-size:8px;font-weight:850;text-transform:uppercase}.cup-result-item.win strong{color:#9be1b7}.cup-result-item.draw strong{color:#d7e2eb}.cup-result-item.loss strong{color:#f2a0a0}.cup-delete-inside{width:100%;margin-top:16px;border:1px solid rgba(239,106,106,.42);background:#311d22;color:#ffd0d0;border-radius:13px;padding:12px 14px;font-weight:950}.cup-name-error{min-height:18px;margin-top:7px;color:#ef8585;font-size:10px;font-weight:850}
 
   </style>
 </head>
@@ -396,7 +396,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.20-preview';
+    const VERSION='1.64.21-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const CUPS_KEY='vaksala-match-cups-v1';
@@ -976,8 +976,11 @@
       const subtitle=m.isCup?((m.matchCount||0)+' matcher · '+new Date(m.savedAt).toLocaleDateString('sv-SE')):(maxHalf+' perioder · '+new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'}));
       const scoreLabel=m.isCup?'Mål totalt':'Resultat';
       const timeLabel=m.isCup?'Total matchtid':'Matchtid';
+      const cupRecord=m.isCup?'<div class="cup-result-summary"><div class="cup-result-item win"><strong>'+m.wins+'</strong><span>Vinster</span></div><div class="cup-result-item draw"><strong>'+m.draws+'</strong><span>Oavgjorda</span></div><div class="cup-result-item loss"><strong>'+m.losses+'</strong><span>Förluster</span></div></div>':'';
+      const cupDelete=m.isCup?'<button type="button" class="cup-delete-inside" data-cup-id="'+escapeHtml(m.cupId)+'">Ta bort cup</button>':'';
       return '<div class="history-stats-head"><div class="history-stats-match">'+escapeHtml(m.name||('Vaksala - '+(m.opponent||'Motståndare')))+'</div><div class="history-stats-sub">'+subtitle+'</div></div>'+
         '<div class="history-kpis"><div class="history-kpi score"><strong>'+m.homeScore+'–'+m.awayScore+'</strong><span>'+scoreLabel+'</span></div><div class="history-kpi time"><strong>'+fmt(total)+'</strong><span>'+timeLabel+'</span></div><button type="button" class="history-kpi spread spread-kpi-btn"><strong>'+fmt(spread)+'</strong><span>Spridning</span></button></div>'+
+        cupRecord+
         '<div class="history-stat-sections">'+
           '<details class="history-stat-section play"><summary><span class="history-stat-title">Speltid</span><span class="history-stat-summary">'+players.length+' spelare</span></summary><div class="history-stat-body"><div class="history-player-list">'+playRows+'</div></div></details>'+
           '<details class="history-stat-section bench-time"><summary><span class="history-stat-title">Bänktid</span><span class="history-stat-summary">'+players.length+' spelare</span></summary><div class="history-stat-body"><div class="history-player-list">'+benchRows+'</div></div></details>'+
@@ -985,7 +988,7 @@
           '<details class="history-stat-section goals-on"><summary><span class="history-stat-title">På plan vid gjorda mål</span><span class="history-stat-summary">'+homeGoals+' mål</span></summary><div class="history-stat-body"><div class="history-player-list">'+onForRows+'</div></div></details>'+
           '<details class="history-stat-section against"><summary><span class="history-stat-title">På plan vid insläppta mål</span><span class="history-stat-summary">'+awayGoals+' mål</span></summary><div class="history-stat-body"><div class="history-player-list">'+onAgainstRows+'</div></div></details>'+
           '<details class="history-stat-section gk"><summary><span class="history-stat-title">Målvakter</span><span class="history-stat-summary">'+gkStats.length+' spelare</span></summary><div class="history-stat-body"><div class="history-player-list">'+gkRows+'</div></div></details>'+
-        '</div>';
+        '</div>'+cupDelete;
     }
     function currentMatchStatsSnapshot(){
       return {
@@ -1091,6 +1094,9 @@
           });
         });
       });
+      const wins=matches.filter(m=>(Number(m.homeScore)||0)>(Number(m.awayScore)||0)).length;
+      const draws=matches.filter(m=>(Number(m.homeScore)||0)===(Number(m.awayScore)||0)).length;
+      const losses=matches.filter(m=>(Number(m.homeScore)||0)<(Number(m.awayScore)||0)).length;
       return {
         id:'cup-'+cup.id,
         isCup:true,
@@ -1098,6 +1104,7 @@
         name:cup.name,
         savedAt:cup.createdAt,
         matchCount:matches.length,
+        wins,draws,losses,
         sourceMatches:matches.map(m=>({id:m.id,name:m.name,homeScore:m.homeScore,awayScore:m.awayScore})),
         homeScore,awayScore,totalMatchMs,totalHalves:1,halfMinutes:Math.max(1,totalMatchMs/60000),
         goals,players:Array.from(playerMap.values())
@@ -1142,13 +1149,12 @@
           const away=matches.reduce((s,m)=>s+(Number(m.awayScore)||0),0);
           const total=matches.reduce((s,m)=>s+(Number(m.totalMatchMs)||0),0);
           const card=document.createElement('div');card.className='cup-card';
+          const wins=matches.filter(m=>(Number(m.homeScore)||0)>(Number(m.awayScore)||0)).length;
+          const draws=matches.filter(m=>(Number(m.homeScore)||0)===(Number(m.awayScore)||0)).length;
+          const losses=matches.filter(m=>(Number(m.homeScore)||0)<(Number(m.awayScore)||0)).length;
           card.innerHTML='<div class="cup-top"><span class="cup-name">'+escapeHtml(cup.name)+'</span><span class="cup-count">'+matches.length+' matcher</span></div>'+
-            '<div class="cup-meta"><span>Mål '+home+'–'+away+'</span><span>Total '+fmt(total)+'</span></div>'+
-            '<button type="button" class="cup-delete">Ta bort cup</button>';
-          card.onclick=e=>{
-            if(e.target.closest('.cup-delete')){e.stopPropagation();deleteCup(cup.id);return}
-            showHistoryStats(aggregateCup(cup));
-          };
+            '<div class="cup-meta"><span>Mål '+home+'–'+away+'</span><span>V '+wins+' · O '+draws+' · F '+losses+'</span><span>Total '+fmt(total)+'</span></div>';
+          card.onclick=()=>showHistoryStats(aggregateCup(cup));
           cupList.appendChild(card);
         });
         box.appendChild(cupList);
@@ -1211,7 +1217,22 @@
     $('historyStatsBtn').onclick=()=>showHistoryStats(historyMatchById(selectedHistoryId));
     $('historyExportBtn').onclick=()=>exportHistoryCsv(historyMatchById(selectedHistoryId));
     $('historyDeleteBtn').onclick=()=>deleteHistoryMatch(historyMatchById(selectedHistoryId));
-    $('historyStatsContent').onclick=e=>{if(e.target.closest('.spread-kpi-btn'))showSpread(transientStatsMatch||historyMatchById(selectedHistoryId))};
+    $('historyStatsContent').onclick=e=>{
+      if(e.target.closest('.spread-kpi-btn')){showSpread(transientStatsMatch||historyMatchById(selectedHistoryId));return}
+      const deleteBtn=e.target.closest('.cup-delete-inside');
+      if(deleteBtn){
+        const cupId=deleteBtn.dataset.cupId;
+        const cup=cups.find(c=>c.id===cupId);
+        if(!cup)return;
+        if(!confirm('Ta bort cupen '+cup.name+'? Matcherna ligger kvar i historiken.'))return;
+        $('historyStatsDialog').close();
+        transientStatsMatch=null;
+        selectedHistoryId=null;
+        cups=cups.filter(c=>c.id!==cupId);
+        save();
+        renderHistory();
+      }
+    };
     $('spreadClose').onclick=()=>$('spreadDialog').close();
     $('historyStatsClose').onclick=()=>{$('historyStatsDialog').close();selectedHistoryId=null;transientStatsMatch=null};
     $('historyChartBtn').onclick=()=>{const m=transientStatsMatch||historyMatchById(selectedHistoryId);if(!m)return;$('historyChartContent').innerHTML=historyChartMarkup(m);$('historyStatsDialog').close();$('historyChartDialog').showModal()};
