@@ -203,6 +203,7 @@
       <div class="setting"><div class="setting-label">Antal utespelare</div><div class="stepper"><button id="outfieldMinus">−</button><div class="stepper-value" id="outfieldValue">4</div><button id="outfieldPlus">+</button></div></div>
     </div>
     <button class="settings-player-button" id="openAddPlayerMenu">+ Lägg till spelare</button>
+    <button class="settings-player-button" id="openPatternSettings">Ändra mönsterlås</button>
     <div class="version-box" id="settingsVersion"></div>
   </div></div>
 
@@ -215,6 +216,23 @@
       <button class="secondary" id="addPlayerCancel">Stäng</button>
       <button class="primary" id="addPlayerConfirm">Lägg till</button>
     </div>
+  </div></dialog>
+
+  <dialog id="changePatternDialog"><div class="modal">
+    <h2>Ändra mönsterlås</h2>
+    <p id="changePatternInstruction">Rita ett nytt mönster med minst 4 punkter.</p>
+    <div class="pattern-board settings-pattern-board" id="settingsPatternBoard" aria-label="Nytt mönster">
+      <svg class="pattern-lines" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true">
+        <path class="pattern-path" id="settingsPatternPath" d=""></path>
+      </svg>
+      <div class="pattern-grid">
+        <div class="pattern-node" data-settings-pattern-node="1"></div><div class="pattern-node" data-settings-pattern-node="2"></div><div class="pattern-node" data-settings-pattern-node="3"></div>
+        <div class="pattern-node" data-settings-pattern-node="4"></div><div class="pattern-node" data-settings-pattern-node="5"></div><div class="pattern-node" data-settings-pattern-node="6"></div>
+        <div class="pattern-node" data-settings-pattern-node="7"></div><div class="pattern-node" data-settings-pattern-node="8"></div><div class="pattern-node" data-settings-pattern-node="9"></div>
+      </div>
+    </div>
+    <div class="pin-error" id="settingsPatternError"></div>
+    <div class="modal-actions"><button class="secondary" id="changePatternCancel">Avbryt</button></div>
   </div></dialog>
 
   <div class="sheet" id="historySheet" aria-hidden="true"><div class="sheet-card">
@@ -357,11 +375,12 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.16-preview';
+    const VERSION='1.64.17-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
     const PATTERN_HASH='b557ca6af4fa3940f5368bc0868f4a082c48408b9b753e237eda99e7223853ab';
+    const PATTERN_STORAGE_KEY='vaksala-match-pattern-hash-v1';
     const TEAM_ROSTER=['Nåd','Antony','Augustus','Endrit','Erik','Liam','John','Rahand','Lwi','Frans','Charles','Salah','Finn','Ryan','Ian','Karam','Jarvis','Advaith','Josef','Raphael','Even'];
 
     const defaultState=()=>({
@@ -1350,7 +1369,8 @@
       if(patternChecking||patternSequence.length<4){clearPattern();return}
       patternChecking=true;
       const entered=patternSequence.join('-');
-      const ok=(await sha256Hex(entered))===PATTERN_HASH;
+      const activePatternHash=localStorage.getItem(PATTERN_STORAGE_KEY)||PATTERN_HASH;
+      const ok=(await sha256Hex(entered))===activePatternHash;
       if(ok){
         $('pinError').textContent='';
         $('pinLock').classList.add('unlocked');
@@ -1406,6 +1426,150 @@
     patternBoard.addEventListener('pointerup',finishPattern);
     patternBoard.addEventListener('pointercancel',finishPattern);
     window.addEventListener('resize',()=>{if(patternSequence.length)renderPatternPath()});
+
+    const settingsPatternBoard=$('settingsPatternBoard');
+    const settingsPatternPath=$('settingsPatternPath');
+    const settingsPatternNodes=Array.from(settingsPatternBoard.querySelectorAll('.pattern-node'));
+    let settingsPatternActive=false;
+    let settingsPatternSequence=[];
+    let settingsPatternPointer=null;
+    let pendingNewPattern=null;
+
+    function settingsPatternNodeCenter(node){
+      const boardRect=settingsPatternBoard.getBoundingClientRect();
+      const r=node.getBoundingClientRect();
+      return {
+        x:((r.left+r.width/2-boardRect.left)/boardRect.width)*300,
+        y:((r.top+r.height/2-boardRect.top)/boardRect.height)*300
+      };
+    }
+    function settingsPatternNodeAt(clientX,clientY){
+      let best=null,bestDistance=Infinity;
+      settingsPatternNodes.forEach(node=>{
+        const r=node.getBoundingClientRect();
+        const x=r.left+r.width/2,y=r.top+r.height/2;
+        const d=Math.hypot(clientX-x,clientY-y);
+        if(d<Math.max(r.width,r.height)*.72&&d<bestDistance){best=node;bestDistance=d}
+      });
+      return best;
+    }
+    function renderSettingsPatternPath(){
+      if(!settingsPatternSequence.length){settingsPatternPath.setAttribute('d','');return}
+      const points=settingsPatternSequence.map(value=>settingsPatternNodeCenter(settingsPatternNodes.find(n=>n.dataset.settingsPatternNode===value)));
+      let d='M '+points[0].x+' '+points[0].y;
+      for(let i=1;i<points.length;i++)d+=' L '+points[i].x+' '+points[i].y;
+      if(settingsPatternActive&&settingsPatternPointer)d+=' L '+settingsPatternPointer.x+' '+settingsPatternPointer.y;
+      settingsPatternPath.setAttribute('d',d);
+    }
+    function clearSettingsPattern(delay=0){
+      setTimeout(()=>{
+        settingsPatternSequence=[];
+        settingsPatternPointer=null;
+        settingsPatternNodes.forEach(n=>n.classList.remove('active','current'));
+        settingsPatternBoard.classList.remove('error');
+        settingsPatternPath.setAttribute('d','');
+      },delay);
+    }
+    function addSettingsPatternNode(node){
+      if(!node)return;
+      const value=node.dataset.settingsPatternNode;
+      if(settingsPatternSequence.includes(value))return;
+      const last=settingsPatternSequence.at(-1);
+      if(last){
+        const mid=intermediatePatternNode(last,value);
+        if(mid&&!settingsPatternSequence.includes(mid)){
+          settingsPatternSequence.push(mid);
+          settingsPatternNodes.find(n=>n.dataset.settingsPatternNode===mid)?.classList.add('active');
+        }
+      }
+      settingsPatternSequence.push(value);
+      settingsPatternNodes.forEach(n=>n.classList.remove('current'));
+      node.classList.add('active','current');
+      if(navigator.vibrate)navigator.vibrate(18);
+      renderSettingsPatternPath();
+    }
+    function resetChangePatternDialog(){
+      pendingNewPattern=null;
+      clearSettingsPattern();
+      $('settingsPatternError').textContent='';
+      $('changePatternInstruction').textContent='Rita ett nytt mönster med minst 4 punkter.';
+    }
+    async function finishSettingsPattern(){
+      const sequence=settingsPatternSequence.join('-');
+      if(settingsPatternSequence.length<4){
+        $('settingsPatternError').textContent='Mönstret måste innehålla minst 4 punkter.';
+        settingsPatternBoard.classList.add('error');
+        if(navigator.vibrate)navigator.vibrate([80,55,80]);
+        clearSettingsPattern(500);
+        return;
+      }
+      if(!pendingNewPattern){
+        pendingNewPattern=sequence;
+        $('settingsPatternError').textContent='';
+        $('changePatternInstruction').textContent='Rita samma mönster igen för att bekräfta.';
+        clearSettingsPattern(250);
+        return;
+      }
+      if(sequence!==pendingNewPattern){
+        pendingNewPattern=null;
+        $('settingsPatternError').textContent='Mönstren matchade inte. Försök igen.';
+        $('changePatternInstruction').textContent='Rita ett nytt mönster med minst 4 punkter.';
+        settingsPatternBoard.classList.add('error');
+        if(navigator.vibrate)navigator.vibrate([80,55,80]);
+        clearSettingsPattern(550);
+        return;
+      }
+      localStorage.setItem(PATTERN_STORAGE_KEY,await sha256Hex(sequence));
+      $('settingsPatternError').textContent='';
+      $('changePatternInstruction').textContent='Mönstret är sparat.';
+      if(navigator.vibrate)navigator.vibrate(45);
+      clearSettingsPattern(180);
+      setTimeout(()=>$('changePatternDialog').close(),500);
+      pendingNewPattern=null;
+    }
+    settingsPatternBoard.addEventListener('pointerdown',e=>{
+      const node=settingsPatternNodeAt(e.clientX,e.clientY);
+      if(!node)return;
+      e.preventDefault();
+      settingsPatternBoard.setPointerCapture?.(e.pointerId);
+      $('settingsPatternError').textContent='';
+      clearSettingsPattern();
+      settingsPatternActive=true;
+      settingsPatternSequence=[];
+      settingsPatternPointer=null;
+      addSettingsPatternNode(node);
+    });
+    settingsPatternBoard.addEventListener('pointermove',e=>{
+      if(!settingsPatternActive)return;
+      e.preventDefault();
+      const rect=settingsPatternBoard.getBoundingClientRect();
+      settingsPatternPointer={
+        x:((e.clientX-rect.left)/rect.width)*300,
+        y:((e.clientY-rect.top)/rect.height)*300
+      };
+      addSettingsPatternNode(settingsPatternNodeAt(e.clientX,e.clientY));
+      renderSettingsPatternPath();
+    });
+    const finishSettingsPatternPointer=e=>{
+      if(!settingsPatternActive)return;
+      e.preventDefault();
+      settingsPatternActive=false;
+      settingsPatternPointer=null;
+      settingsPatternNodes.forEach(n=>n.classList.remove('current'));
+      renderSettingsPatternPath();
+      finishSettingsPattern();
+    };
+    settingsPatternBoard.addEventListener('pointerup',finishSettingsPatternPointer);
+    settingsPatternBoard.addEventListener('pointercancel',finishSettingsPatternPointer);
+    $('openPatternSettings').onclick=()=>{
+      closeSheets();
+      resetChangePatternDialog();
+      $('changePatternDialog').showModal();
+    };
+    $('changePatternCancel').onclick=()=>{
+      resetChangePatternDialog();
+      $('changePatternDialog').close();
+    };
 
     render();
     const launchSplash=$('launchSplash');
