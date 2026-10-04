@@ -382,7 +382,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.18-preview';
+    const VERSION='1.64.19-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -421,6 +421,18 @@
         pendingPlayerSortFade=true;
         render();
       },5000);
+    }
+    let managePanelIdleTimer=null;
+    function closeManagePanel(){
+      clearTimeout(managePanelIdleTimer);
+      const panel=$('managePanel');
+      if(panel?.open)panel.open=false;
+    }
+    function scheduleManagePanelClose(){
+      clearTimeout(managePanelIdleTimer);
+      const panel=$('managePanel');
+      if(!panel?.open)return;
+      managePanelIdleTimer=setTimeout(()=>closeManagePanel(),8000);
     }
 
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
@@ -1042,7 +1054,7 @@
       });
     }
 
-    function openSheet(id){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});const s=$(id);s.classList.add('open');s.setAttribute('aria-hidden','false');$('settingsTab').classList.toggle('active',id==='settingsSheet');$('historyTab').classList.toggle('active',id==='historySheet')}
+    function openSheet(id){closeManagePanel();document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});const s=$(id);s.classList.add('open');s.setAttribute('aria-hidden','false');$('settingsTab').classList.toggle('active',id==='settingsSheet');$('historyTab').classList.toggle('active',id==='historySheet')}
     function closeSheets(){document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))}
 
     $('activateAllPlayers').onclick=()=>{pushUndo('aktivera alla');state.players.forEach(p=>{p.enabled=true;ensureHalfStat(p)});logEvent('Alla spelare aktiverades','roster');save();render()};
@@ -1251,8 +1263,26 @@
       }
     };$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
     $('settingsTab').onclick=()=>openSheet('settingsSheet');$('historyTab').onclick=()=>openSheet('historySheet');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);document.querySelectorAll('.sheet').forEach(s=>s.onclick=e=>{if(e.target===s)closeSheets()});
-    document.addEventListener('pointerdown',()=>{if(playerSortMode!==0)schedulePlayerSortReset()},{passive:true});
-    document.addEventListener('keydown',()=>{if(playerSortMode!==0)schedulePlayerSortReset()});
+    document.addEventListener('pointerdown',e=>{
+      if(playerSortMode!==0)schedulePlayerSortReset();
+      const panel=$('managePanel');
+      if(panel?.open){
+        if(panel.contains(e.target))scheduleManagePanelClose();
+        else closeManagePanel();
+      }
+    },{passive:true});
+    document.addEventListener('keydown',e=>{
+      if(playerSortMode!==0)schedulePlayerSortReset();
+      const panel=$('managePanel');
+      if(panel?.open){
+        if(panel.contains(e.target))scheduleManagePanelClose();
+        else closeManagePanel();
+      }
+    });
+    $('managePanel')?.addEventListener('toggle',()=>{
+      if($('managePanel').open)scheduleManagePanelClose();
+      else clearTimeout(managePanelIdleTimer);
+    });
 
     $('openAddPlayerMenu').onclick=()=>{
       $('newPlayerName').value='';
