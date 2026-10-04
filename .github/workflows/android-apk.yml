@@ -2,6 +2,7 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+  push:
 
 permissions:
   contents: read
@@ -58,6 +59,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Vaksala-SK-18-v1.64.17-debug
+          name: Vaksala-SK-18-v1.64.18-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
