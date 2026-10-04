@@ -19,7 +19,7 @@
     @keyframes launchLogo{0%{opacity:0;transform:scale(.80)}22%{opacity:1;transform:scale(.98)}58%{opacity:1;transform:scale(1.04)}100%{opacity:0;transform:scale(1.18)}}
     @media(prefers-reduced-motion:reduce){.launch-splash img{animation:launchLogoReduced .6s ease forwards}@keyframes launchLogoReduced{0%{opacity:0}35%{opacity:1}100%{opacity:0}}}
     html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .pin-lock{position:fixed;inset:0;z-index:9998;background:#070b10;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .22s ease,visibility .22s ease}.pin-lock.unlocked{opacity:0;visibility:hidden;pointer-events:none}.pin-card{width:min(360px,100%);text-align:center}.pin-title{font-size:24px;font-weight:950}.pin-sub{margin-top:7px;color:var(--muted);font-size:12px;font-weight:750}.pin-slots{display:grid;grid-template-columns:repeat(4,58px);justify-content:center;gap:12px;margin:28px 0 20px}.pin-slot{width:58px;height:58px;border:1px solid #2b3c4b;border-radius:16px;background:#101923;display:flex;align-items:center;justify-content:center;overflow:hidden}.pin-slot::after{content:'';width:10px;height:10px;border-radius:50%;background:#334452}.pin-slot.filled{border-color:rgba(240,180,86,.55);background:#151b20}.pin-slot.filled::after{display:none}.pin-slot img{width:42px;height:42px;object-fit:contain}.pin-hidden-input{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}.pin-error{min-height:18px;margin-top:12px;color:#ef8a8a;font-size:11px;font-weight:850}.pin-card.shake{animation:pinShake .32s ease}@keyframes pinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+    .pin-lock{position:fixed;inset:0;z-index:9998;background:#070b10;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity .22s ease,visibility .22s ease}.pin-lock.unlocked{opacity:0;visibility:hidden;pointer-events:none}.pin-card{width:min(360px,100%);text-align:center}.pin-title{font-size:24px;font-weight:950}.pin-sub{margin-top:7px;color:var(--muted);font-size:12px;font-weight:750}.pattern-board{position:relative;width:min(78vw,300px);aspect-ratio:1;margin:28px auto 12px;touch-action:none;user-select:none;-webkit-user-select:none}.pattern-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.pattern-path{fill:none;stroke:#7bc3ff;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;opacity:.9;filter:drop-shadow(0 0 5px rgba(103,183,255,.28))}.pattern-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);place-items:center}.pattern-node{width:52px;height:52px;border-radius:50%;border:2px solid #425568;background:#111b25;display:grid;place-items:center;transition:border-color .08s ease,background .08s ease,transform .08s ease,box-shadow .08s ease;pointer-events:none}.pattern-node::after{content:'';width:11px;height:11px;border-radius:50%;background:#65788a}.pattern-node.active{border-color:#7bc3ff;background:#162b3b;box-shadow:0 0 0 5px rgba(103,183,255,.12)}.pattern-node.active::after{background:#b9e2ff}.pattern-node.current{transform:scale(1.08)}.pattern-board.error .pattern-path{stroke:var(--red)}.pattern-board.error .pattern-node.active{border-color:var(--red);background:#321b20;box-shadow:0 0 0 5px rgba(239,106,106,.12)}.pattern-board.error .pattern-node.active::after{background:#ffb0b0}.pin-error{min-height:18px;margin-top:6px;color:#ef8a8a;font-size:11px;font-weight:850}.pin-card.shake{animation:pinShake .32s ease}@keyframes pinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
     button,input,select{font:inherit} button{cursor:pointer}
     .app{width:min(980px,100%);margin:-22px auto 0;padding:0 10px calc(86px + env(safe-area-inset-bottom))}
     .topbar{display:flex;align-items:center;justify-content:center;margin:0 2px 10px;gap:12px}
@@ -94,11 +94,18 @@
 
   <div class="pin-lock" id="pinLock">
     <div class="pin-card" id="pinCard">
-      <div class="pin-title">Ange PIN-kod</div>
-      <div class="pin-slots" id="pinSlots">
-        <div class="pin-slot"></div><div class="pin-slot"></div><div class="pin-slot"></div><div class="pin-slot"></div>
+      <div class="pin-title">Rita mönster</div>
+      <div class="pin-sub">Dra mellan punkterna för att låsa upp</div>
+      <div class="pattern-board" id="patternBoard" aria-label="Mönsterlås">
+        <svg class="pattern-lines" viewBox="0 0 300 300" preserveAspectRatio="none" aria-hidden="true">
+          <path class="pattern-path" id="patternPath" d=""></path>
+        </svg>
+        <div class="pattern-grid">
+          <div class="pattern-node" data-pattern-node="1"></div><div class="pattern-node" data-pattern-node="2"></div><div class="pattern-node" data-pattern-node="3"></div>
+          <div class="pattern-node" data-pattern-node="4"></div><div class="pattern-node" data-pattern-node="5"></div><div class="pattern-node" data-pattern-node="6"></div>
+          <div class="pattern-node" data-pattern-node="7"></div><div class="pattern-node" data-pattern-node="8"></div><div class="pattern-node" data-pattern-node="9"></div>
+        </div>
       </div>
-      <input class="pin-hidden-input" id="pinInput" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="PIN-kod">
       <div class="pin-error" id="pinError"></div>
     </div>
   </div>
@@ -350,11 +357,11 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.15-preview';
+    const VERSION='1.64.16-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
-    const PIN_HASH='5db1fee4b5703808c48078a76768b155b421b210c0761cd6a5d223f4d99f1eaa';
+    const PATTERN_HASH='b557ca6af4fa3940f5368bc0868f4a082c48408b9b753e237eda99e7223853ab';
     const TEAM_ROSTER=['Nåd','Antony','Augustus','Endrit','Erik','Liam','John','Rahand','Lwi','Frans','Charles','Salah','Finn','Ryan','Ian','Karam','Jarvis','Advaith','Josef','Raphael','Even'];
 
     const defaultState=()=>({
@@ -1265,60 +1272,140 @@
       const digest=await crypto.subtle.digest('SHA-256',data);
       return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
     }
-    function renderPinSlots(){
-      const value=$('pinInput').value;
-      $('pinSlots').querySelectorAll('.pin-slot').forEach((slot,i)=>{
-        slot.classList.toggle('filled',i<value.length);
-        slot.innerHTML=i<value.length?'<img src="assets/pwpin.png" alt="">':'';
+    const patternBoard=$('patternBoard');
+    const patternPath=$('patternPath');
+    const patternNodes=Array.from(patternBoard.querySelectorAll('.pattern-node'));
+    let patternActive=false;
+    let patternSequence=[];
+    let patternPointer=null;
+    let patternChecking=false;
+
+    function patternNodeCenter(node){
+      const boardRect=patternBoard.getBoundingClientRect();
+      const r=node.getBoundingClientRect();
+      return {
+        x:((r.left+r.width/2-boardRect.left)/boardRect.width)*300,
+        y:((r.top+r.height/2-boardRect.top)/boardRect.height)*300
+      };
+    }
+    function patternNodeAt(clientX,clientY){
+      let best=null,bestDistance=Infinity;
+      patternNodes.forEach(node=>{
+        const r=node.getBoundingClientRect();
+        const x=r.left+r.width/2,y=r.top+r.height/2;
+        const d=Math.hypot(clientX-x,clientY-y);
+        if(d<Math.max(r.width,r.height)*.72&&d<bestDistance){best=node;bestDistance=d}
       });
+      return best;
     }
-    async function verifyPin(){
-      const input=$('pinInput');
-      if(input.value.length!==4)return;
-      const entered=input.value;
-      input.disabled=true;
-      try{
-        const ok=(await sha256Hex(entered))===PIN_HASH;
-        if(ok){
-          $('pinError').textContent='';
-          $('pinLock').classList.add('unlocked');
-          setTimeout(()=>{
-            $('pinLock')?.remove();
-            if(!state.opponent)openOpponentDialog();
-          },240);
-        }else{
-          $('pinError').textContent='Fel PIN-kod';
-          $('pinCard').classList.remove('shake');
-          void $('pinCard').offsetWidth;
-          $('pinCard').classList.add('shake');
-          input.value='';
-          renderPinSlots();
-        }
-      }finally{
-        if(document.body.contains(input)){
-          input.disabled=false;
-          input.focus({preventScroll:true});
+    function intermediatePatternNode(from,to){
+      const a=Number(from),b=Number(to);
+      const ar=Math.floor((a-1)/3),ac=(a-1)%3;
+      const br=Math.floor((b-1)/3),bc=(b-1)%3;
+      if(Math.abs(ar-br)%2===0&&Math.abs(ac-bc)%2===0){
+        const mr=(ar+br)/2,mc=(ac+bc)/2;
+        if(Number.isInteger(mr)&&Number.isInteger(mc)){
+          const mid=mr*3+mc+1;
+          if(mid!==a&&mid!==b)return String(mid);
         }
       }
+      return null;
     }
-    $('pinLock').onclick=()=>$('pinInput')?.focus({preventScroll:true});
-    $('pinInput').addEventListener('input',e=>{
-      e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);
+    function addPatternNode(node){
+      if(!node)return;
+      const value=node.dataset.patternNode;
+      if(patternSequence.includes(value))return;
+      const last=patternSequence.at(-1);
+      if(last){
+        const mid=intermediatePatternNode(last,value);
+        if(mid&&!patternSequence.includes(mid)){
+          patternSequence.push(mid);
+          patternNodes.find(n=>n.dataset.patternNode===mid)?.classList.add('active');
+        }
+      }
+      patternSequence.push(value);
+      patternNodes.forEach(n=>n.classList.remove('current'));
+      node.classList.add('active','current');
+      if(navigator.vibrate)navigator.vibrate(18);
+      renderPatternPath();
+    }
+    function renderPatternPath(){
+      if(!patternSequence.length){patternPath.setAttribute('d','');return}
+      const points=patternSequence.map(value=>patternNodeCenter(patternNodes.find(n=>n.dataset.patternNode===value)));
+      let d='M '+points[0].x+' '+points[0].y;
+      for(let i=1;i<points.length;i++)d+=' L '+points[i].x+' '+points[i].y;
+      if(patternActive&&patternPointer)d+=' L '+patternPointer.x+' '+patternPointer.y;
+      patternPath.setAttribute('d',d);
+    }
+    function clearPattern(delay=0){
+      setTimeout(()=>{
+        patternSequence=[];
+        patternPointer=null;
+        patternNodes.forEach(n=>n.classList.remove('active','current'));
+        patternBoard.classList.remove('error');
+        patternPath.setAttribute('d','');
+      },delay);
+    }
+    async function verifyPattern(){
+      if(patternChecking||patternSequence.length<4){clearPattern();return}
+      patternChecking=true;
+      const entered=patternSequence.join('-');
+      const ok=(await sha256Hex(entered))===PATTERN_HASH;
+      if(ok){
+        $('pinError').textContent='';
+        $('pinLock').classList.add('unlocked');
+        if(navigator.vibrate)navigator.vibrate(45);
+        setTimeout(()=>{
+          $('pinLock')?.remove();
+          if(!state.opponent)openOpponentDialog();
+        },240);
+      }else{
+        $('pinError').textContent='Fel mönster';
+        patternBoard.classList.add('error');
+        $('pinCard').classList.remove('shake');
+        void $('pinCard').offsetWidth;
+        $('pinCard').classList.add('shake');
+        if(navigator.vibrate)navigator.vibrate([80,55,80]);
+        clearPattern(450);
+      }
+      patternChecking=false;
+    }
+    patternBoard.addEventListener('pointerdown',e=>{
+      if(patternChecking)return;
+      const node=patternNodeAt(e.clientX,e.clientY);
+      if(!node)return;
+      e.preventDefault();
+      patternBoard.setPointerCapture?.(e.pointerId);
       $('pinError').textContent='';
-      renderPinSlots();
-      if(e.target.value.length===4)verifyPin();
+      clearPattern();
+      patternActive=true;
+      patternSequence=[];
+      patternPointer=null;
+      addPatternNode(node);
     });
-    document.addEventListener('keydown',e=>{
-      if(!$('pinLock')||$('pinLock').classList.contains('unlocked'))return;
-      if(/^\d$/.test(e.key)){
-        const input=$('pinInput');
-        if(input.value.length<4){input.value+=e.key;input.dispatchEvent(new Event('input',{bubbles:true}))}
-        e.preventDefault();
-      }else if(e.key==='Backspace'){
-        const input=$('pinInput');input.value=input.value.slice(0,-1);renderPinSlots();e.preventDefault();
-      }
+    patternBoard.addEventListener('pointermove',e=>{
+      if(!patternActive)return;
+      e.preventDefault();
+      const rect=patternBoard.getBoundingClientRect();
+      patternPointer={
+        x:((e.clientX-rect.left)/rect.width)*300,
+        y:((e.clientY-rect.top)/rect.height)*300
+      };
+      addPatternNode(patternNodeAt(e.clientX,e.clientY));
+      renderPatternPath();
     });
-    setTimeout(()=>$('pinInput')?.focus({preventScroll:true}),1900);
+    const finishPattern=e=>{
+      if(!patternActive)return;
+      e.preventDefault();
+      patternActive=false;
+      patternPointer=null;
+      patternNodes.forEach(n=>n.classList.remove('current'));
+      renderPatternPath();
+      verifyPattern();
+    };
+    patternBoard.addEventListener('pointerup',finishPattern);
+    patternBoard.addEventListener('pointercancel',finishPattern);
+    window.addEventListener('resize',()=>{if(patternSequence.length)renderPatternPath()});
 
     render();
     const launchSplash=$('launchSplash');
