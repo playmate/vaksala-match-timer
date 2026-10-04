@@ -358,7 +358,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.63.9-preview';
+    const VERSION='1.64.0-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -384,7 +384,19 @@
     let pendingNewMatchBackup=null;
     let playerSortMode=0;
     let pendingPlayerSortSwipe=null;
+    let playerSortIdleTimer=null;
     const $=id=>document.getElementById(id);
+
+    function schedulePlayerSortReset(){
+      clearTimeout(playerSortIdleTimer);
+      if(playerSortMode===0)return;
+      playerSortIdleTimer=setTimeout(()=>{
+        if(playerSortMode===0)return;
+        playerSortMode=0;
+        pendingPlayerSortSwipe='right';
+        render();
+      },5000);
+    }
 
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
     function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
@@ -595,6 +607,7 @@
             card.style.opacity='0';
           });
           pendingPlayerSortSwipe=dir<0?'left':'right';
+          schedulePlayerSortReset();
           setTimeout(()=>render(),90);
         }else if(dragging){
           cards.forEach(card=>{
@@ -676,6 +689,7 @@
           if(mode===playerSortMode)return;
           playerSortMode=mode;
           pendingPlayerSortSwipe=mode===2?'left':mode===1?'right':null;
+          schedulePlayerSortReset();
           render();
         };
       });
@@ -1241,6 +1255,9 @@
       }
     };$('opponentConfirm').onclick=()=>{const n=$('opponentInput').value.trim();if(!n)return;startNewMatchWithOpponent(n);$('opponentDialog').close()};$('opponentInput').onkeydown=e=>{if(e.key==='Enter')$('opponentConfirm').click()};
     $('settingsTab').onclick=()=>openSheet('settingsSheet');$('historyTab').onclick=()=>openSheet('historySheet');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheets);document.querySelectorAll('.sheet').forEach(s=>s.onclick=e=>{if(e.target===s)closeSheets()});
+    document.addEventListener('pointerdown',()=>{if(playerSortMode!==0)schedulePlayerSortReset()},{passive:true});
+    document.addEventListener('keydown',()=>{if(playerSortMode!==0)schedulePlayerSortReset()});
+
     $('openAddPlayerMenu').onclick=()=>{
       $('newPlayerName').value='';
       $('addPlayerFeedback').textContent='';
