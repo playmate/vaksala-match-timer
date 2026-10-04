@@ -59,18 +59,18 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Vaksala-SK-18-v1.64.20-debug
+          name: Vaksala-SK-18-v1.64.21-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
       - name: Prepare release APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk Vaksala-SK-18-v1.64.20-debug.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk Vaksala-SK-18-v1.64.21-debug.apk
 
       - name: Create public GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.64.20-apk
-          name: Vaksala SK -18 v1.64.20
-          body: Android APK for Vaksala SK -18 v1.64.20.
-          files: Vaksala-SK-18-v1.64.20-debug.apk
+          tag_name: v1.64.21-apk
+          name: Vaksala SK -18 v1.64.21
+          body: Android APK for Vaksala SK -18 v1.64.21.
+          files: Vaksala-SK-18-v1.64.21-debug.apk
           make_latest: true
