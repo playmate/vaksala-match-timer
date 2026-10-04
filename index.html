@@ -258,6 +258,7 @@
   <dialog id="confirmResetDialog"><div class="modal">
     <h2>Återställ</h2><p>Välj vad du vill återställa. Motståndare och matchinställningar behålls.</p>
     <div class="reset-options">
+      <button class="reset-option" id="resetCurrentStints"><strong>Återställ nuvarande bytestid</strong><span>Nollställer bara aktuell speltid/bänktid sedan senaste byte. Total speltid och total bänktid behålls.</span></button>
       <button class="reset-option" id="resetPlayersOnly"><strong>Återställ spelare</strong><span>Alla spelare flyttas till bänken. Tider och ställning behålls.</span></button>
       <button class="reset-option" id="resetTimeOnly"><strong>Återställ tid</strong><span>Matchklocka och alla spelartider återställs till 0. Ställning och placeringar behålls.</span></button>
       <button class="reset-option danger-option" id="resetFullMatch"><strong>Återställ match</strong><span>Alla till bänken, 0–0 och alla tider återställs till 0.</span></button>
@@ -358,7 +359,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.63.4-preview';
+    const VERSION='1.63.5-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -1129,6 +1130,15 @@
       state={...defaultState(),...settings,players:roster};
       selectedSwapId=null;pendingGoalkeeperSwap=null;goalkeeperSwipedOpen=false;save();render();openOpponentDialog();
     }
+    function resetCurrentStints(){
+      pushUndo('återställ nuvarande bytestid');
+      state.players.forEach(p=>p.stintMs=0);
+      vibratedFiveMinute.clear();
+      vibratedSevenMinute.clear();
+      logEvent('Nuvarande byte- och bänktider återställdes','reset');
+      save();
+      render();
+    }
     function clearField(){
       pushUndo('återställ spelare');
       state.players.forEach(p=>{if(p.onField){p.onField=false;p.stintMs=0}});
@@ -1164,6 +1174,7 @@
     $('newMatchBtnBottom').onclick=()=>$('confirmNewDialog').showModal();$('cancelNew').onclick=()=>$('confirmNewDialog').close();$('confirmNew').onclick=()=>{$('confirmNewDialog').close();prepareNewMatch()};
     $('resetMatchBtn').onclick=()=>$('confirmResetDialog').showModal();
     $('cancelReset').onclick=()=>$('confirmResetDialog').close();
+    $('resetCurrentStints').onclick=()=>{$('confirmResetDialog').close();resetCurrentStints()};
     $('resetPlayersOnly').onclick=()=>{$('confirmResetDialog').close();clearField()};
     $('resetTimeOnly').onclick=()=>{$('confirmResetDialog').close();resetAllTime()};
     $('resetFullMatch').onclick=()=>{$('confirmResetDialog').close();resetCurrentMatch()};
