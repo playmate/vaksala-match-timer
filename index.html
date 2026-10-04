@@ -86,6 +86,9 @@
       details.manage{margin-top:16px;padding-top:16px}
     }
     @media(min-width:720px){.app{padding-top:22px}.hero{padding:22px}.players.bench{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  
+    .history-toolbar{display:flex;gap:8px;margin-bottom:12px}.history-select-toggle,.history-create-cup{flex:1;border:1px solid #34495c;background:#172633;color:#dce8f2;border-radius:13px;padding:11px 12px;font-weight:900}.history-select-toggle.active{background:#24405a;border-color:#67b7ff;color:#e8f5ff}.history-create-cup{background:#24583b;border-color:rgba(83,213,139,.55);color:#dcffe9}.history-create-cup:disabled{opacity:.35}.history-card.selecting{padding-left:42px;position:relative}.history-select-dot{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;border:2px solid #526779;background:#101923}.history-card.selected .history-select-dot{border-color:#67b7ff;background:#67b7ff;box-shadow:inset 0 0 0 4px #101923}.history-section-label{margin:4px 2px 8px;color:#8492a0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.cup-list{display:grid;gap:9px;margin-bottom:16px}.cup-card{border:1px solid rgba(103,183,255,.35);background:linear-gradient(180deg,#122334,#101b27);border-radius:17px;padding:13px 14px;cursor:pointer}.cup-card:active{transform:scale(.99)}.cup-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.cup-name{font-size:15px;font-weight:950}.cup-count{font-size:10px;color:#9acdf7;font-weight:900}.cup-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px;color:#7f8e9c;font-size:9px;font-weight:800}.cup-delete{margin-top:9px;border:1px solid rgba(239,106,106,.35);background:#2b1c20;color:#e6aaaa;border-radius:10px;padding:7px 10px;font-size:10px;font-weight:900}.cup-name-error{min-height:18px;margin-top:7px;color:#ef8585;font-size:10px;font-weight:850}
+
   </style>
 </head>
 <body>
@@ -242,6 +245,17 @@
     <div class="modal-actions"><button class="secondary" id="changePatternCancel">Avbryt</button></div>
   </div></dialog>
 
+  <dialog id="createCupDialog"><div class="modal">
+    <h2>Skapa cup</h2>
+    <p>Ge cupen ett namn. De markerade matcherna grupperas och får gemensam statistik.</p>
+    <input class="input" id="cupNameInput" maxlength="60" placeholder="Cupens namn" autocomplete="off" />
+    <div class="cup-name-error" id="cupNameError"></div>
+    <div class="modal-actions">
+      <button class="secondary" id="cupCreateCancel">Avbryt</button>
+      <button class="primary" id="cupCreateConfirm">Skapa cup</button>
+    </div>
+  </div></dialog>
+
   <div class="sheet" id="historySheet" aria-hidden="true"><div class="sheet-card">
     <div class="sheet-head"><div class="sheet-title">Historik</div><button class="close" data-close="historySheet">×</button></div>
     <div id="historyContent"></div>
@@ -382,9 +396,10 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.19-preview';
+    const VERSION='1.64.20-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
+    const CUPS_KEY='vaksala-match-cups-v1';
     const TEAM='Vaksala SK';
     const PATTERN_HASH='b557ca6af4fa3940f5368bc0868f4a082c48408b9b753e237eda99e7223853ab';
     const PATTERN_STORAGE_KEY='vaksala-match-pattern-hash-v1';
@@ -397,6 +412,9 @@
 
     let state=loadState();
     let history=loadHistory();
+    let cups=loadCups();
+    let historySelectionMode=false;
+    let selectedCupMatchIds=new Set();
     let selectedSwapId=null;
     let pendingGoalkeeperSwap=null;
     let goalkeeperSwipedOpen=false;
@@ -476,9 +494,11 @@
     }
     function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(!p){const d=defaultState();d.players=syncTeamRoster([]);return d}p.players=syncTeamRoster(p.players||[]);p.goals=p.goals||[];p.events=p.events||[];p.totalHalves=Math.max(1,Number(p.totalHalves)||2);p.halfMinutes=Math.max(1,Number(p.halfMinutes)||30);p.outfieldCount=Math.max(1,Math.min(8,Number(p.outfieldCount)||4));p.half=Math.max(1,Number(p.half)||1);p.elapsedMs=Number(p.elapsedMs)||0;p.halfElapsed=p.halfElapsed||{};if(!Object.keys(p.halfElapsed).length&&p.elapsedMs)p.halfElapsed[p.half]=p.elapsedMs;p.elapsedMs=Number(p.halfElapsed[p.half])||0;if(p.running&&p.startedAt){const d=Math.max(0,Date.now()-p.startedAt);applyDelta(p,d);p.startedAt=Date.now()}return {...defaultState(),...p}}catch{return defaultState()}}
     function loadHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY))||[]}catch{return []}}
+    function loadCups(){try{return JSON.parse(localStorage.getItem(CUPS_KEY))||[]}catch{return []}}
     function save(){
       localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
       localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
+      localStorage.setItem(CUPS_KEY,JSON.stringify(cups));
       const el=$('autosaveStatus');
       if(el){
         el.textContent='Sparad';
@@ -944,7 +964,7 @@
       const benchRows=stats.slice().sort((a,b)=>b.bench-a.bench||a.p.name.localeCompare(b.p.name,'sv-SE')).map(({p,bench})=>row(p.name,fmt(bench),'bench-value')).join('')||'<div class="history-stat-empty">Ingen bänktid.</div>';
       const scoredStats=stats.filter(x=>x.s.scored>0).sort((a,b)=>b.s.scored-a.s.scored||a.p.name.localeCompare(b.p.name,'sv-SE'));
       const scoredRows=scoredStats.map(({p,s})=>{
-        const minutes=(m.goals||[]).filter(g=>g.team==='home'&&g.scorerId===p.id).map(g=>goalMinuteLabel(g.timeMs,m.halfMinutes,m.totalHalves)).join(', ');
+        const minutes=m.isCup?'':(m.goals||[]).filter(g=>g.team==='home'&&g.scorerId===p.id).map(g=>goalMinuteLabel(g.timeMs,m.halfMinutes,m.totalHalves)).join(', ');
         return row(p.name,s.scored+' mål'+(minutes?' · '+minutes:''),'goal-value');
       }).join('')||'<div class="history-stat-empty">Inga registrerade målskyttar.</div>';
       const onForRows=stats.slice().sort((a,b)=>b.s.onFor-a.s.onFor||a.p.name.localeCompare(b.p.name,'sv-SE')).map(({p,s})=>row(p.name,s.onFor+' mål','goal-value')).join('')||'<div class="history-stat-empty">Ingen statistik.</div>';
@@ -953,8 +973,11 @@
       const gkRows=gkStats.map(({p,s})=>row(p.name,s.conceded+' mål','against-value')).join('')||'<div class="history-stat-empty">Ingen målvaktsstatistik.</div>';
       const homeGoals=(m.goals||[]).filter(g=>g.team==='home').length;
       const awayGoals=(m.goals||[]).filter(g=>g.team==='away').length;
-      return '<div class="history-stats-head"><div class="history-stats-match">'+escapeHtml(m.name||('Vaksala - '+(m.opponent||'Motståndare')))+'</div><div class="history-stats-sub">'+maxHalf+' perioder · '+new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'})+'</div></div>'+
-        '<div class="history-kpis"><div class="history-kpi score"><strong>'+m.homeScore+'–'+m.awayScore+'</strong><span>Resultat</span></div><div class="history-kpi time"><strong>'+fmt(total)+'</strong><span>Matchtid</span></div><button type="button" class="history-kpi spread spread-kpi-btn"><strong>'+fmt(spread)+'</strong><span>Spridning</span></button></div>'+
+      const subtitle=m.isCup?((m.matchCount||0)+' matcher · '+new Date(m.savedAt).toLocaleDateString('sv-SE')):(maxHalf+' perioder · '+new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'}));
+      const scoreLabel=m.isCup?'Mål totalt':'Resultat';
+      const timeLabel=m.isCup?'Total matchtid':'Matchtid';
+      return '<div class="history-stats-head"><div class="history-stats-match">'+escapeHtml(m.name||('Vaksala - '+(m.opponent||'Motståndare')))+'</div><div class="history-stats-sub">'+subtitle+'</div></div>'+
+        '<div class="history-kpis"><div class="history-kpi score"><strong>'+m.homeScore+'–'+m.awayScore+'</strong><span>'+scoreLabel+'</span></div><div class="history-kpi time"><strong>'+fmt(total)+'</strong><span>'+timeLabel+'</span></div><button type="button" class="history-kpi spread spread-kpi-btn"><strong>'+fmt(spread)+'</strong><span>Spridning</span></button></div>'+
         '<div class="history-stat-sections">'+
           '<details class="history-stat-section play"><summary><span class="history-stat-title">Speltid</span><span class="history-stat-summary">'+players.length+' spelare</span></summary><div class="history-stat-body"><div class="history-player-list">'+playRows+'</div></div></details>'+
           '<details class="history-stat-section bench-time"><summary><span class="history-stat-title">Bänktid</span><span class="history-stat-summary">'+players.length+' spelare</span></summary><div class="history-stat-body"><div class="history-player-list">'+benchRows+'</div></div></details>'+
@@ -1034,6 +1057,71 @@
       const base=(m.name||'vaksala-match').replace(/[^a-zA-Z0-9åäöÅÄÖ_-]+/g,'-');
       a.download=base+'-statistik.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
     }
+    function cupMatches(cup){
+      return (cup?.matchIds||[]).map(id=>history.find(m=>m.id===id)).filter(Boolean);
+    }
+    function aggregateCup(cup){
+      const matches=cupMatches(cup);
+      const playerMap=new Map();
+      const goals=[];
+      let homeScore=0,awayScore=0,totalMatchMs=0;
+      matches.forEach((m,matchIndex)=>{
+        homeScore+=Number(m.homeScore)||0;
+        awayScore+=Number(m.awayScore)||0;
+        totalMatchMs+=Number(m.totalMatchMs)||0;
+        const idMap=new Map();
+        (m.players||[]).forEach(p=>{
+          const key=String(p.name||'').toLocaleLowerCase('sv-SE');
+          if(!playerMap.has(key)){
+            playerMap.set(key,{id:'cup-player-'+key,name:p.name,halfStats:{1:{playMs:0,benchMs:0}},goalkeeperMs:0});
+          }
+          const agg=playerMap.get(key);
+          agg.halfStats[1].playMs+=totalPlay(p);
+          agg.halfStats[1].benchMs+=totalBench(p);
+          agg.goalkeeperMs+=(Number(p.goalkeeperMs)||0);
+          idMap.set(p.id,agg.id);
+        });
+        (m.goals||[]).forEach(g=>{
+          goals.push({
+            ...structuredClone(g),
+            id:'cup-goal-'+matchIndex+'-'+(g.id||uid()),
+            scorerId:g.scorerId?idMap.get(g.scorerId)||null:null,
+            goalkeeperId:g.goalkeeperId?idMap.get(g.goalkeeperId)||null:null,
+            onFieldIds:Array.isArray(g.onFieldIds)?g.onFieldIds.map(id=>idMap.get(id)).filter(Boolean):[]
+          });
+        });
+      });
+      return {
+        id:'cup-'+cup.id,
+        isCup:true,
+        cupId:cup.id,
+        name:cup.name,
+        savedAt:cup.createdAt,
+        matchCount:matches.length,
+        sourceMatches:matches.map(m=>({id:m.id,name:m.name,homeScore:m.homeScore,awayScore:m.awayScore})),
+        homeScore,awayScore,totalMatchMs,totalHalves:1,halfMinutes:Math.max(1,totalMatchMs/60000),
+        goals,players:Array.from(playerMap.values())
+      };
+    }
+    function createCupFromSelection(name){
+      const matchIds=Array.from(selectedCupMatchIds).filter(id=>history.some(m=>m.id===id));
+      if(matchIds.length<2)return false;
+      cups.unshift({id:uid(),name:name.trim(),matchIds,createdAt:new Date().toISOString()});
+      selectedCupMatchIds.clear();
+      historySelectionMode=false;
+      save();
+      renderHistory();
+      return true;
+    }
+    function deleteCup(cupId){
+      const cup=cups.find(c=>c.id===cupId);
+      if(!cup)return;
+      if(!confirm('Ta bort cupen '+cup.name+'? Matcherna ligger kvar i historiken.'))return;
+      cups=cups.filter(c=>c.id!==cupId);
+      save();
+      renderHistory();
+    }
+
     function deleteHistoryMatch(m){
       if(!m)return;
       if(!confirm('Ta bort '+(m.name||'matchen')+' från historiken?'))return;
@@ -1041,17 +1129,63 @@
     }
     function renderHistory(){
       const box=$('historyContent');
-      if(!history.length){box.innerHTML='<div class="history-empty">Inga sparade matcher ännu.</div>';return}
-      box.innerHTML='<div class="history-list"></div>';
-      const list=box.firstChild;
-      history.forEach(m=>{
-        const d=document.createElement('div');d.className='history-card';
-        const date=new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'});
-        const totalMeta=m.totalMatchMs?'<span>Total '+fmt(m.totalMatchMs)+'</span>':'';
-        d.innerHTML='<div style="padding:13px 14px"><div class="hist-top"><span class="hist-name">'+escapeHtml(m.name)+'</span><span class="hist-score">'+m.homeScore+'–'+m.awayScore+'</span></div><div class="hist-meta-row"><span>'+date+'</span>'+totalMeta+'<span>'+(m.totalHalves||1)+' perioder</span></div></div>';
-        d.onclick=()=>openHistoryActions(m.id);
-        list.appendChild(d);
-      });
+      if(!history.length&&!cups.length){box.innerHTML='<div class="history-empty">Inga sparade matcher ännu.</div>';return}
+      const validIds=new Set(history.map(m=>m.id));
+      selectedCupMatchIds=new Set(Array.from(selectedCupMatchIds).filter(id=>validIds.has(id)));
+      box.innerHTML='';
+      if(cups.length){
+        const label=document.createElement('div');label.className='history-section-label';label.textContent='Cuper';box.appendChild(label);
+        const cupList=document.createElement('div');cupList.className='cup-list';
+        cups.forEach(cup=>{
+          const matches=cupMatches(cup);
+          const home=matches.reduce((s,m)=>s+(Number(m.homeScore)||0),0);
+          const away=matches.reduce((s,m)=>s+(Number(m.awayScore)||0),0);
+          const total=matches.reduce((s,m)=>s+(Number(m.totalMatchMs)||0),0);
+          const card=document.createElement('div');card.className='cup-card';
+          card.innerHTML='<div class="cup-top"><span class="cup-name">'+escapeHtml(cup.name)+'</span><span class="cup-count">'+matches.length+' matcher</span></div>'+
+            '<div class="cup-meta"><span>Mål '+home+'–'+away+'</span><span>Total '+fmt(total)+'</span></div>'+
+            '<button type="button" class="cup-delete">Ta bort cup</button>';
+          card.onclick=e=>{
+            if(e.target.closest('.cup-delete')){e.stopPropagation();deleteCup(cup.id);return}
+            showHistoryStats(aggregateCup(cup));
+          };
+          cupList.appendChild(card);
+        });
+        box.appendChild(cupList);
+      }
+      if(history.length){
+        const label=document.createElement('div');label.className='history-section-label';label.textContent='Matcher';box.appendChild(label);
+        const toolbar=document.createElement('div');toolbar.className='history-toolbar';
+        toolbar.innerHTML='<button type="button" class="history-select-toggle '+(historySelectionMode?'active':'')+'">'+(historySelectionMode?'Avsluta val':'Välj matcher')+'</button>'+
+          '<button type="button" class="history-create-cup" '+(selectedCupMatchIds.size<2?'disabled':'')+'>Gruppera ('+selectedCupMatchIds.size+')</button>';
+        toolbar.querySelector('.history-select-toggle').onclick=()=>{
+          historySelectionMode=!historySelectionMode;
+          if(!historySelectionMode)selectedCupMatchIds.clear();
+          renderHistory();
+        };
+        toolbar.querySelector('.history-create-cup').onclick=()=>{
+          if(selectedCupMatchIds.size<2)return;
+          $('cupNameInput').value='';
+          $('cupNameError').textContent='';
+          $('createCupDialog').showModal();
+          setTimeout(()=>$('cupNameInput').focus(),50);
+        };
+        box.appendChild(toolbar);
+        const list=document.createElement('div');list.className='history-list';box.appendChild(list);
+        history.forEach(m=>{
+          const d=document.createElement('div');d.className='history-card'+(historySelectionMode?' selecting':'')+(selectedCupMatchIds.has(m.id)?' selected':'');
+          const date=new Date(m.savedAt).toLocaleString('sv-SE',{dateStyle:'short',timeStyle:'short'});
+          const totalMeta=m.totalMatchMs?'<span>Total '+fmt(m.totalMatchMs)+'</span>':'';
+          d.innerHTML=(historySelectionMode?'<span class="history-select-dot"></span>':'')+'<div style="padding:13px 14px"><div class="hist-top"><span class="hist-name">'+escapeHtml(m.name)+'</span><span class="hist-score">'+m.homeScore+'–'+m.awayScore+'</span></div><div class="hist-meta-row"><span>'+date+'</span>'+totalMeta+'<span>'+(m.totalHalves||1)+' perioder</span></div></div>';
+          d.onclick=()=>{
+            if(historySelectionMode){
+              if(selectedCupMatchIds.has(m.id))selectedCupMatchIds.delete(m.id);else selectedCupMatchIds.add(m.id);
+              renderHistory();
+            }else openHistoryActions(m.id);
+          };
+          list.appendChild(d);
+        });
+      }
     }
 
     function openSheet(id){closeManagePanel();document.querySelectorAll('.sheet').forEach(s=>{s.classList.remove('open');s.setAttribute('aria-hidden','true')});const s=$(id);s.classList.add('open');s.setAttribute('aria-hidden','false');$('settingsTab').classList.toggle('active',id==='settingsSheet');$('historyTab').classList.toggle('active',id==='historySheet')}
@@ -1283,6 +1417,15 @@
       if($('managePanel').open)scheduleManagePanelClose();
       else clearTimeout(managePanelIdleTimer);
     });
+
+    $('cupCreateCancel').onclick=()=>$('createCupDialog').close();
+    $('cupCreateConfirm').onclick=()=>{
+      const name=$('cupNameInput').value.trim();
+      if(!name){$('cupNameError').textContent='Skriv ett namn på cupen.';return}
+      if(cups.some(c=>c.name.localeCompare(name,'sv-SE',{sensitivity:'base'})===0)){$('cupNameError').textContent='Det finns redan en cup med det namnet.';return}
+      if(createCupFromSelection(name))$('createCupDialog').close();
+    };
+    $('cupNameInput').onkeydown=e=>{if(e.key==='Enter')$('cupCreateConfirm').click()};
 
     $('openAddPlayerMenu').onclick=()=>{
       $('newPlayerName').value='';
