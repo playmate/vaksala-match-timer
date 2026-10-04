@@ -358,7 +358,7 @@
   </div></dialog>
 
   <script>
-    const VERSION='1.64.6-preview';
+    const VERSION='1.64.7-preview';
     const STORAGE_KEY='vaksala-match-single-page-v2';
     const HISTORY_KEY='vaksala-match-history-v1';
     const TEAM='Vaksala SK';
@@ -401,6 +401,14 @@
     function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
     function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
     function fmt(ms){const sec=Math.max(0,Math.floor(ms/1000)),m=Math.floor(sec/60),s=sec%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+    function goalMinuteLabel(timeMs,halfMinutes=state.halfMinutes){
+      const ms=Math.max(0,Number(timeMs)||0);
+      const regulation=Math.max(1,Number(halfMinutes)||15)*60000;
+      if(ms>regulation){
+        return Math.max(1,Number(halfMinutes)||15)+'+'+Math.max(1,Math.ceil((ms-regulation)/60000));
+      }
+      return String(Math.max(1,Math.ceil(ms/60000)));
+    }
 
     function normalizePlayer(p){
       p.onField=!!p.onField;p.enabled=p.enabled!==false;p.stintMs=Number(p.stintMs)||0;p.goalkeeperMs=Number(p.goalkeeperMs)||0;p.halfStats=p.halfStats||{};
@@ -610,8 +618,8 @@
       const regulation=state.halfMinutes*60000;
       const over=elapsed>regulation;
       $('clock').textContent=fmt(over?regulation:elapsed);
-      $('clock').classList.toggle('over',over);
-      $('overtime').textContent=over?'+ '+fmt(elapsed-regulation):'';
+      $('clock').classList.remove('over');
+      $('overtime').textContent=over?fmt(elapsed-regulation):'';
       const timeUp=elapsed>=regulation;
       $('clockStatus').textContent=timeUp?`Ordinarie tid slut · ${state.running?'klockan går':'pausad'}`:`${state.running?'Matchen pågår':'Matchen är pausad'} · ${state.halfMinutes}:00`;
       $('clockWrap').classList.toggle('running',state.running);
@@ -894,7 +902,10 @@
       const playRows=stats.map(({p,play})=>row(p.name,fmt(play),'play-value')).join('')||'<div class="history-stat-empty">Ingen speltid.</div>';
       const benchRows=stats.slice().sort((a,b)=>b.bench-a.bench||a.p.name.localeCompare(b.p.name,'sv-SE')).map(({p,bench})=>row(p.name,fmt(bench),'bench-value')).join('')||'<div class="history-stat-empty">Ingen bänktid.</div>';
       const scoredStats=stats.filter(x=>x.s.scored>0).sort((a,b)=>b.s.scored-a.s.scored||a.p.name.localeCompare(b.p.name,'sv-SE'));
-      const scoredRows=scoredStats.map(({p,s})=>row(p.name,s.scored+' mål','goal-value')).join('')||'<div class="history-stat-empty">Inga registrerade målskyttar.</div>';
+      const scoredRows=scoredStats.map(({p,s})=>{
+        const minutes=(m.goals||[]).filter(g=>g.team==='home'&&g.scorerId===p.id).map(g=>goalMinuteLabel(g.timeMs,m.halfMinutes)).join(', ');
+        return row(p.name,s.scored+' mål'+(minutes?' · '+minutes:''),'goal-value');
+      }).join('')||'<div class="history-stat-empty">Inga registrerade målskyttar.</div>';
       const onForRows=stats.slice().sort((a,b)=>b.s.onFor-a.s.onFor||a.p.name.localeCompare(b.p.name,'sv-SE')).map(({p,s})=>row(p.name,s.onFor+' mål','goal-value')).join('')||'<div class="history-stat-empty">Ingen statistik.</div>';
       const onAgainstRows=stats.slice().sort((a,b)=>b.s.onAgainst-a.s.onAgainst||a.p.name.localeCompare(b.p.name,'sv-SE')).map(({p,s})=>row(p.name,s.onAgainst+' mål','against-value')).join('')||'<div class="history-stat-empty">Ingen statistik.</div>';
       const gkStats=stats.filter(x=>x.gk>0||x.s.conceded>0).sort((a,b)=>b.s.conceded-a.s.conceded||a.p.name.localeCompare(b.p.name,'sv-SE'));
